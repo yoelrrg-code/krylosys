@@ -1,0 +1,83 @@
+/* Krylosys Custom Dark Theme Overrides for Payload CMS v3 */
+
+html, body, [data-theme], .template-minimal, .template-default, .login {
+  background-color: #060913 !important;
+  color: #F8FAFC !important;
+}
+
+/* Payload Login Container & Form Box */
+.login__wrap, .template-minimal__wrap {
+  background-color: #0D1322 !important;
+  border: 1px solid rgba(0, 200, 255, 0.2) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 20px 50px -10px rgba(0, 200, 255, 0.15) !important;
+  padding: 2.5rem !important;
+}
+
+/* Ensure Krylosys Logo is centered and visible */
+.payload-logo {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  margin-bottom: 1.5rem !important;
+}
+
+/* Input Fields */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+textarea,
+select,
+.field-type input {
+  background-color: #141C2E !important;
+  color: #FFFFFF !important;
+  border: 1px solid #1E293B !important;
+  border-radius: 12px !important;
+  padding: 0.75rem 1rem !important;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+textarea:focus,
+select:focus {
+  border-color: #00C8FF !important;
+  box-shadow: 0 0 0 2px rgba(0, 200, 255, 0.25) !important;
+  outline: none !important;
+}
+
+/* Field Labels */
+label, .field-label {
+  color: #94A3B8 !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* Login CTA Button */
+button[type="submit"], .btn--style-primary, .btn--style-secondary {
+  background: linear-gradient(135deg, #00C8FF 0%, #0077FF 100%) !important;
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+  border-radius: 12px !important;
+  border: none !important;
+  padding: 0.875rem 1.5rem !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 200, 255, 0.3) !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+button[type="submit"]:hover, .btn--style-primary:hover {
+  background: linear-gradient(135deg, #33D6FF 0%, #1A88FF 100%) !important;
+  box-shadow: 0 12px 30px -5px rgba(0, 200, 255, 0.45) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Payload Links */
+a {
+  color: #00C8FF !important;
+}
+
+a:hover {
+  color: #33D6FF !important;
+}

@@ -2,8 +2,17 @@ import React from "react";
 import { Globe, ShoppingBag, Zap, Code, Check, ArrowRight, Sparkles } from "lucide-react";
 import { siteConfig } from "@/config/site";
 
-export function Services() {
-  const services = [
+interface ServicesProps {
+  data?: any[] | null;
+  contactData?: {
+    whatsappNumber?: string;
+  } | null;
+}
+
+export function Services({ data, contactData }: ServicesProps) {
+  const whatsappNumber = contactData?.whatsappNumber || siteConfig.contact.whatsappNumber;
+
+  const defaultServices = [
     {
       id: "wordpress",
       icon: Globe,
@@ -74,6 +83,28 @@ export function Services() {
     },
   ];
 
+  const getIcon = (idx: number) => {
+    const icons = [Globe, ShoppingBag, Zap, Code];
+    return icons[idx % icons.length];
+  };
+
+  const servicesList =
+    data && data.length > 0
+      ? data.map((doc, idx) => ({
+          id: doc.id || `service-${idx}`,
+          icon: getIcon(idx),
+          badge: doc.badge || "Servicio",
+          score: doc.score || "Profesional",
+          title: doc.title,
+          description: doc.description,
+          features: Array.isArray(doc.features)
+            ? doc.features.map((f: any) => (typeof f === "string" ? f : f.feature))
+            : [],
+          whatsappMsg: doc.whatsappMsg || `Hola Krylosys, me interesa consultar por ${doc.title}`,
+          highlight: Boolean(doc.highlight),
+        }))
+      : defaultServices;
+
   return (
     <section
       id="servicios"
@@ -101,8 +132,8 @@ export function Services() {
 
         {/* Glassmorphism Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
-          {services.map((service, idx) => {
-            const whatsappUrl = `https://wa.me/${siteConfig.contact.whatsappNumber}?text=${encodeURIComponent(
+          {servicesList.map((service, idx) => {
+            const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
               service.whatsappMsg
             )}`;
 
@@ -160,7 +191,7 @@ export function Services() {
 
                   {/* Bullet Features */}
                   <ul className="space-y-3 mb-8">
-                    {service.features.map((feat, fIdx) => (
+                    {service.features.map((feat: string, fIdx: number) => (
                       <li key={fIdx} className="flex items-start gap-3 text-sm text-slate-700 dark:text-slate-200">
                         <div className="w-5 h-5 rounded-full bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 flex items-center justify-center shrink-0 mt-0.5">
                           <Check className="w-3.5 h-3.5" aria-hidden="true" />

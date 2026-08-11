@@ -2,10 +2,32 @@ import React from "react";
 import { ArrowRight, Code2, Globe, ShoppingCart, Zap, Sparkles, CheckCircle2 } from "lucide-react";
 import { siteConfig } from "@/config/site";
 
-export function Hero() {
-  const whatsappUrl = `https://wa.me/${siteConfig.contact.whatsappNumber}?text=${encodeURIComponent(
+interface HeroProps {
+  data?: {
+    badgeText?: string | null;
+    headline?: string | null;
+    subtitle?: string | null;
+    ctaPrimaryText?: string | null;
+    ctaSecondaryText?: string | null;
+  } | null;
+  contactData?: {
+    whatsappNumber?: string | null;
+  } | null;
+}
+
+export function Hero({ data, contactData }: HeroProps) {
+  const whatsappNumber = contactData?.whatsappNumber || siteConfig.contact.whatsappNumber;
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
     siteConfig.contact.whatsappDefaultMessage
   )}`;
+
+  const badgeText = data?.badgeText || "Desarrollo de Software & Soluciones Web de Alto Rendimiento";
+  const headline = data?.headline || "Construimos tu presencia digital con tecnología de vanguardia";
+  const subtitle =
+    data?.subtitle ||
+    "Expertos en sitios corporativos en WordPress, tiendas online WooCommerce, landing pages ultrarrápidas en Next.js y desarrollo de software a medida.";
+  const ctaPrimaryText = data?.ctaPrimaryText || "Iniciar Proyecto";
+  const ctaSecondaryText = data?.ctaSecondaryText || "Hablar por WhatsApp";
 
   return (
     <section id="inicio" aria-labelledby="hero-heading" className="relative pt-32 pb-20 md:pt-44 md:pb-32 overflow-hidden">
@@ -19,7 +41,7 @@ export function Hero() {
           {/* Top Cyber Badge */}
           <div data-aos="fade-down" className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-pill border border-cyan-500/30 text-cyan-600 dark:text-cyan-400 text-xs sm:text-sm font-semibold shadow-lg shadow-cyan-500/10">
             <Sparkles className="w-4 h-4 text-cyan-500 animate-pulse" aria-hidden="true" />
-            <span>Desarrollo de Software & Soluciones Web de Alto Rendimiento</span>
+            <span>{badgeText}</span>
           </div>
 
           {/* Main H1 Headline */}
@@ -29,10 +51,7 @@ export function Hero() {
             data-aos-delay="100"
             className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.1]"
           >
-            Construimos tu presencia digital con{" "}
-            <span className="text-gradient-krylosys drop-shadow-[0_0_25px_rgba(0,200,255,0.3)]">
-              tecnología de vanguardia
-            </span>
+            {headline}
           </h1>
 
           {/* Subtitle */}
@@ -41,7 +60,7 @@ export function Hero() {
             data-aos-delay="200"
             className="text-lg sm:text-xl md:text-2xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto font-normal leading-relaxed"
           >
-            Expertos en sitios corporativos en WordPress, tiendas online WooCommerce, landing pages ultrarrápidas en Next.js y desarrollo de software a medida.
+            {subtitle}
           </p>
 
           {/* Key Value Points */}
@@ -66,7 +85,7 @@ export function Hero() {
               href="#contacto"
               className="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-extrabold text-base shadow-xl shadow-cyan-500/25 hover:shadow-cyan-500/40 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 group focus:outline-none focus:ring-2 focus:ring-cyan-400"
             >
-              <span>Iniciar Proyecto</span>
+              <span>{ctaPrimaryText}</span>
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
             </a>
 
@@ -76,7 +95,7 @@ export function Hero() {
               rel="noopener noreferrer"
               className="w-full sm:w-auto px-8 py-4 rounded-xl glass-pill hover:bg-slate-200/60 dark:hover:bg-slate-800/80 text-slate-900 dark:text-white font-bold text-base border border-slate-300 dark:border-cyan-500/30 transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-cyan-500"
             >
-              <span>Hablar por WhatsApp</span>
+              <span>{ctaSecondaryText}</span>
             </a>
           </div>
 

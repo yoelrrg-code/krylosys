@@ -22,19 +22,33 @@ html, body, [data-theme], .template-minimal, .template-default, .login {
   margin-bottom: 1.5rem !important;
 }
 
-/* Input Fields */
+/* Standard Input Fields */
 input[type="text"],
 input[type="email"],
 input[type="password"],
 input[type="number"],
 textarea,
-select,
-.field-type input {
+select {
   background-color: #141C2E !important;
   color: #FFFFFF !important;
   border: 1px solid #1E293B !important;
   border-radius: 12px !important;
   padding: 0.75rem 1rem !important;
+}
+
+/* Fix spacing for ALL Payload Search Inputs (high specificity) */
+input[type="search"],
+input[type="text"][placeholder*="Search" i],
+input[type="text"][placeholder*="Buscar" i],
+input[type="text"][class*="search" i],
+.search-filter input,
+.search-filter__input,
+.search-bar input,
+.search-bar__input,
+.list-controls input,
+div[class*="search" i] input,
+div[class*="search" i] input[type="text"] {
+  padding-left: 2.75rem !important;
 }
 
 input[type="text"]:focus,
@@ -45,6 +59,92 @@ select:focus {
   border-color: #00C8FF !important;
   box-shadow: 0 0 0 2px rgba(0, 200, 255, 0.25) !important;
   outline: none !important;
+}
+
+/* Payload React-Select & Custom Dropdowns */
+.rs__control,
+.react-select__control,
+.select-input,
+.field-type.select .rs__control,
+.field-type.relationship .rs__control {
+  background-color: #141C2E !important;
+  border: 1px solid #1E293B !important;
+  border-radius: 12px !important;
+  min-height: 46px !important;
+  color: #FFFFFF !important;
+}
+
+.rs__control--is-focused,
+.react-select__control--is-focused {
+  border-color: #00C8FF !important;
+  box-shadow: 0 0 0 2px rgba(0, 200, 255, 0.25) !important;
+}
+
+.rs__value-container,
+.react-select__value-container {
+  padding: 0.5rem 1rem !important;
+  color: #FFFFFF !important;
+}
+
+.rs__single-value,
+.react-select__single-value {
+  color: #FFFFFF !important;
+}
+
+.rs__placeholder,
+.react-select__placeholder {
+  color: #94A3B8 !important;
+}
+
+/* Prevent internal react-select input from creating a dark box over selected text */
+.rs__input-container,
+.rs__input-container input,
+.rs__input,
+.rs__input input,
+.react-select__input,
+.react-select__input input,
+.field-type.select input,
+.field-type.relationship input {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  color: #FFFFFF !important;
+}
+
+/* React-Select Dropdown Menu & Options */
+.rs__menu,
+.react-select__menu {
+  background-color: #0D1322 !important;
+  border: 1px solid #1E293B !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
+  overflow: hidden !important;
+  z-index: 50 !important;
+}
+
+.rs__option,
+.react-select__option {
+  background-color: transparent !important;
+  color: #F8FAFC !important;
+  padding: 0.625rem 1rem !important;
+}
+
+.rs__option--is-focused,
+.react-select__option--is-focused,
+.rs__option:hover,
+.react-select__option:hover {
+  background-color: #1E293B !important;
+  color: #00C8FF !important;
+}
+
+.rs__option--is-selected,
+.react-select__option--is-selected {
+  background-color: #0077FF !important;
+  color: #FFFFFF !important;
 }
 
 /* Field Labels */

@@ -3,10 +3,14 @@
 import React, { useState } from "react";
 import { ChevronDown, HelpCircle } from "lucide-react";
 
-export function FAQ() {
+interface FAQProps {
+  data?: any[] | null;
+}
+
+export function FAQ({ data }: FAQProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
-  const faqs = [
+  const defaultFaqs = [
     {
       question: "¿Cuánto tiempo demora el desarrollo de una web corporativa o tienda online?",
       answer:
@@ -34,6 +38,14 @@ export function FAQ() {
     },
   ];
 
+  const faqsList =
+    data && data.length > 0
+      ? data.map((doc) => ({
+          question: doc.question,
+          answer: doc.answer,
+        }))
+      : defaultFaqs;
+
   const toggleFAQ = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
   };
@@ -59,49 +71,45 @@ export function FAQ() {
             Resolvemos tus dudas sobre <span className="text-gradient-krylosys">desarrollo web y software</span>
           </h2>
           <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300">
-            Respuestas claras sobre nuestros procesos de trabajo, tecnologías y metodologías de entrega.
+            Todo lo que necesitás saber antes de iniciar tu próximo proyecto con Krylosys.
           </p>
         </div>
 
-        {/* Glassmorphism FAQ Accordion List - Single Parent AOS Animation */}
+        {/* Glassmorphism FAQ Accordion List */}
         <div data-aos="fade-up" data-aos-delay="100" className="space-y-4">
-          {faqs.map((faq, index) => {
-            const isOpen = openIndex === index;
+          {faqsList.map((faq, idx) => {
+            const isOpen = openIndex === idx;
+
             return (
               <div
-                key={index}
-                className={`rounded-2xl transition-all duration-200 border ${
+                key={idx}
+                className={`rounded-2xl transition-all duration-200 overflow-hidden ${
                   isOpen
-                    ? "glass-panel border-cyan-500/50 shadow-lg shadow-cyan-500/10"
-                    : "glass-card-pro hover:border-slate-300 dark:hover:border-slate-700"
+                    ? "bg-white dark:bg-[#060D1E] border-2 border-cyan-500/80 dark:border-cyan-400/80 shadow-lg shadow-cyan-500/10"
+                    : "glass-card-pro border border-slate-200/80 dark:border-slate-800 hover:border-cyan-500/40"
                 }`}
               >
                 <button
-                  onClick={() => toggleFAQ(index)}
+                  onClick={() => toggleFAQ(idx)}
                   aria-expanded={isOpen}
-                  aria-controls={`faq-answer-${index}`}
-                  className="w-full p-6 text-left flex items-center justify-between gap-4 focus:outline-none rounded-2xl"
+                  className="w-full px-6 py-5 text-left flex items-center justify-between gap-4 focus:outline-none focus:ring-2 focus:ring-cyan-500 rounded-2xl"
                 >
-                  <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                  <span className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
                     {faq.question}
-                  </h3>
+                  </span>
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-transform duration-200 ${
+                    className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-transform duration-300 ${
                       isOpen
-                        ? "bg-cyan-500/20 text-cyan-500 rotate-180"
-                        : "glass-pill text-slate-500 dark:text-slate-400"
+                        ? "bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 rotate-180"
+                        : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400"
                     }`}
                   >
-                    <ChevronDown className="w-5 h-5" aria-hidden="true" />
+                    <ChevronDown className="w-4 h-4" aria-hidden="true" />
                   </div>
                 </button>
 
                 {isOpen && (
-                  <div
-                    id={`faq-answer-${index}`}
-                    role="region"
-                    className="px-6 pb-6 pt-1 text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed border-t border-slate-100 dark:border-slate-800/60"
-                  >
+                  <div className="px-6 pb-6 pt-1 text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed border-t border-slate-100 dark:border-slate-800/60 mt-1">
                     {faq.answer}
                   </div>
                 )}

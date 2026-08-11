@@ -3,7 +3,11 @@
 import React, { useState } from "react";
 import { FolderGit2, ExternalLink, Code2 } from "lucide-react";
 
-export function Projects() {
+interface ProjectsProps {
+  data?: any[] | null;
+}
+
+export function Projects({ data }: ProjectsProps) {
   const [activeCategory, setActiveCategory] = useState("all");
 
   const categories = [
@@ -14,7 +18,14 @@ export function Projects() {
     { id: "custom", label: "Software a Medida" },
   ];
 
-  const projects = [
+  const categoryLabels: Record<string, string> = {
+    nextjs: "Next.js & React",
+    wordpress: "WordPress",
+    woocommerce: "WooCommerce",
+    custom: "Software a Medida",
+  };
+
+  const defaultProjects = [
     {
       id: 1,
       title: "FinTech Corporate Platform",
@@ -61,10 +72,27 @@ export function Projects() {
     },
   ];
 
+  const projectsList =
+    data && data.length > 0
+      ? data.map((doc, idx) => ({
+          id: doc.id || idx + 1,
+          title: doc.title,
+          category: doc.category || "custom",
+          categoryLabel: categoryLabels[doc.category] || doc.category || "Proyecto",
+          description: doc.description,
+          techs: Array.isArray(doc.tags)
+            ? doc.tags.map((t: any) => (typeof t === "string" ? t : t.tag))
+            : [],
+          metrics: doc.metrics || "Lighthouse Score 100",
+          imageText: `Krylosys ${doc.title}`,
+          url: doc.demoUrl || "#contacto",
+        }))
+      : defaultProjects;
+
   const filteredProjects =
     activeCategory === "all"
-      ? projects
-      : projects.filter((p) => p.category === activeCategory);
+      ? projectsList
+      : projectsList.filter((p) => p.category === activeCategory);
 
   return (
     <section
@@ -161,7 +189,7 @@ export function Projects() {
                   </p>
 
                   <div className="flex flex-wrap gap-2 pt-2">
-                    {project.techs.map((tech, tIdx) => (
+                    {project.techs.map((tech: string, tIdx: number) => (
                       <span
                         key={tIdx}
                         className="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold border border-slate-200 dark:border-slate-700/60"

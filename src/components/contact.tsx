@@ -4,7 +4,21 @@ import React, { useState } from "react";
 import { MessageCircle, Mail, Send, CheckCircle2, Clock, MapPin, Sparkles, Loader2, Zap, Globe, ShoppingBag, Code } from "lucide-react";
 import { siteConfig } from "@/config/site";
 
-export function Contact() {
+interface ContactProps {
+  contactData?: {
+    email?: string | null;
+    phone?: string | null;
+    whatsappNumber?: string | null;
+    businessHours?: string | null;
+  } | null;
+}
+
+export function Contact({ contactData }: ContactProps) {
+  const email = contactData?.email || siteConfig.contact.email;
+  const phone = contactData?.phone || siteConfig.contact.phone;
+  const whatsappNumber = contactData?.whatsappNumber || siteConfig.contact.whatsappNumber;
+  const businessHours = contactData?.businessHours || "Atención: Lunes a Viernes de 9:00 a 18:00 hs";
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -51,7 +65,7 @@ export function Contact() {
     }
   };
 
-  const whatsappUrl = `https://wa.me/${siteConfig.contact.whatsappNumber}?text=${encodeURIComponent(
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
     "Hola Krylosys, quiero hacer una consulta comercial"
   )}`;
 
@@ -107,13 +121,13 @@ export function Contact() {
                   <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">Respuesta Rápida (&lt; 15 min)</span>
                 </div>
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white">Escribinos por WhatsApp</h3>
-                <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 mt-1">{siteConfig.contact.phone}</p>
+                <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 mt-1">{phone}</p>
               </div>
             </a>
 
             {/* Email Card */}
             <a
-              href={`mailto:${siteConfig.contact.email}`}
+              href={`mailto:${email}`}
               className="p-6 rounded-3xl bg-cyan-50 dark:bg-cyan-950/40 border border-cyan-200 dark:border-cyan-500/30 hover:border-cyan-400 transition-all duration-200 flex items-center gap-5 group shadow-sm hover:shadow-md focus:ring-2 focus:ring-cyan-500 focus:outline-none"
             >
               <div className="w-14 h-14 rounded-2xl bg-cyan-500 text-white flex items-center justify-center shrink-0 shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
@@ -122,7 +136,7 @@ export function Contact() {
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-cyan-700 dark:text-cyan-400">Atención Comercial</span>
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white">Enviar un Correo</h3>
-                <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 mt-1">{siteConfig.contact.email}</p>
+                <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 mt-1">{email}</p>
               </div>
             </a>
 
@@ -130,7 +144,7 @@ export function Contact() {
             <div className="p-6 rounded-3xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 space-y-4 shadow-sm">
               <div className="flex items-center gap-3 text-sm font-medium text-slate-700 dark:text-slate-300">
                 <Clock className="w-5 h-5 text-cyan-500 shrink-0" aria-hidden="true" />
-                <span>Atención: Lunes a Viernes de 9:00 a 18:00 hs</span>
+                <span>{businessHours}</span>
               </div>
               <div className="flex items-center gap-3 text-sm font-medium text-slate-700 dark:text-slate-300">
                 <MapPin className="w-5 h-5 text-cyan-500 shrink-0" aria-hidden="true" />

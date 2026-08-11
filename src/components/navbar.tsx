@@ -7,7 +7,13 @@ import { Sun, Moon, Menu, X, MessageCircle } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { motion } from "framer-motion";
 
-export function Navbar() {
+interface NavbarProps {
+  contactData?: {
+    whatsappNumber?: string | null;
+  } | null;
+}
+
+export function Navbar({ contactData }: NavbarProps = {}) {
   const { setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -15,27 +21,41 @@ export function Navbar() {
   const [activeSection, setActiveSection] = useState("inicio");
 
   useEffect(() => {
-    setMounted(true);
+    // Schedule setMounted asynchronously to prevent synchronous cascading renders warning
+    const timer = setTimeout(() => setMounted(true), 0);
+
+    let ticking = false;
 
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setScrolled(window.scrollY > 20);
 
-      // Section intersection observer
-      const sections = ["inicio", "nosotros", "servicios", "proyectos", "faq", "contacto"];
-      const current = sections.find((sec) => {
-        const el = document.getElementById(sec);
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          return rect.top <= 140 && rect.bottom >= 140;
-        }
-        return false;
-      });
+          // Section intersection observer
+          const sections = ["inicio", "nosotros", "servicios", "proyectos", "faq", "contacto"];
+          const current = sections.find((sec) => {
+            const el = document.getElementById(sec);
+            if (el) {
+              const rect = el.getBoundingClientRect();
+              return rect.top <= 140 && rect.bottom >= 140;
+            }
+            return false;
+          });
 
-      if (current) setActiveSection(current);
+          if (current) {
+            setActiveSection((prev) => (prev === current ? prev : current));
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
   const navLinks = [
@@ -47,7 +67,8 @@ export function Navbar() {
     { name: "Contacto", href: "#contacto", id: "contacto" },
   ];
 
-  const whatsappUrl = `https://wa.me/${siteConfig.contact.whatsappNumber}?text=${encodeURIComponent(
+  const whatsappNumber = contactData?.whatsappNumber || siteConfig.contact.whatsappNumber;
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
     siteConfig.contact.whatsappDefaultMessage
   )}`;
 
@@ -59,7 +80,7 @@ export function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 w-full z-50 transition-all duration-300 max-w-full ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
           ? "backdrop-blur-2xl backdrop-saturate-150 bg-white/90 dark:bg-[#060913]/85 border-b border-slate-200 dark:border-cyan-500/25 shadow-md shadow-slate-200/50 dark:shadow-cyan-500/5 py-1"
           : "bg-transparent py-3"

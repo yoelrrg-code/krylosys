@@ -1,7 +1,21 @@
 import React from "react";
 import { ShieldCheck, Cpu, Layers, Rocket } from "lucide-react";
 
-export function About() {
+interface AboutProps {
+  data?: {
+    badge?: string | null;
+    title?: string | null;
+    description?: string | null;
+  } | null;
+}
+
+export function About({ data }: AboutProps) {
+  const badge = data?.badge || "Nosotros";
+  const title = data?.title || "En Krylosys convertimos necesidades complejas en desarrollo simple y efectivo.";
+  const description =
+    data?.description ||
+    "Somos un equipo especializado en desarrollo de software y presencia digital de alto impacto para empresas y negocios que exigen soluciones robustas, rápidas y escalables.";
+
   return (
     <section
       id="nosotros"
@@ -13,16 +27,16 @@ export function About() {
         {/* Section Header */}
         <div data-aos="fade-up" className="max-w-3xl mb-16 space-y-4">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-pill text-cyan-600 dark:text-cyan-400 text-xs font-bold uppercase tracking-wider">
-            Nosotros
+            {badge}
           </div>
           <h2
             id="about-heading"
             className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight"
           >
-            En <span className="text-gradient-krylosys">Krylosys</span> convertimos necesidades complejas en desarrollo simple y efectivo.
+            {title}
           </h2>
           <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
-            Somos un equipo especializado en desarrollo de software y presencia digital de alto impacto para empresas y negocios que exigen soluciones robustas, rápidas y escalables.
+            {description}
           </p>
         </div>
 
@@ -99,10 +113,10 @@ export function About() {
               <ShieldCheck className="w-6 h-6" aria-hidden="true" />
             </div>
             <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">
-              Seguridad & Mantenimiento Continuo
+              Seguridad & Código Limpio
             </h3>
             <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-              Protegemos tu plataforma con protocolos de seguridad, parches periódicos, respaldos y soporte preventivo para garantizar disponibilidad 99.9%.
+              Implementamos protocolos de seguridad avanzada y mejores prácticas de optimización de código para garantizar confiabilidad y protección continua.
             </p>
           </div>
 
@@ -116,10 +130,10 @@ export function About() {
               <Rocket className="w-6 h-6" aria-hidden="true" />
             </div>
             <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">
-              Enfoque Orientado a Conversión & Ventas
+              Enfoque en Resultados & Conversión
             </h3>
             <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-              Cada diseño se concibe con técnicas de UX orientadas a captar clientes, optimizar embudos de ventas y convertir visitas en oportunidades de negocio.
+              No solo construimos código: diseñamos cada interfaz orientada a maximizar tus conversiones, la retención de usuarios y el impacto comercial de tu marca.
             </p>
           </div>
 

@@ -1,183 +1,88 @@
-/* Krylosys Custom Dark Theme Overrides for Payload CMS v3 */
+/* ==========================================================================
+   Krylosys Clean Modern Admin Theme for Payload CMS v3
+   Uses Native Theme Elevation Variables for Perfect Contrast & Layout
+   ========================================================================== */
 
-html, body, [data-theme], .template-minimal, .template-default, .login {
-  background-color: #060913 !important;
+:root, [data-theme="dark"], html[data-theme="dark"] {
+  --theme-bg: #0B0F19 !important;
+  --theme-elevation-0: #0B0F19 !important;
+  --theme-elevation-50: #0F172A !important;
+  --theme-elevation-100: #131C2E !important;
+  --theme-elevation-150: #1E293B !important;
+  --theme-elevation-200: #1E293B !important;
+  --theme-elevation-250: #334155 !important;
+  --theme-elevation-300: #475569 !important;
+  --theme-elevation-400: #64748B !important;
+  --theme-elevation-500: #94A3B8 !important;
+  --theme-elevation-600: #CBD5E1 !important;
+  --theme-elevation-700: #E2E8F0 !important;
+  --theme-elevation-800: #F8FAFC !important;
+  --theme-elevation-900: #FFFFFF !important;
+  --theme-text: #F8FAFC !important;
+  --theme-input-bg: #131C2E !important;
+  --theme-border-color: #1E293B !important;
+}
+
+/* Ensure clean overall body background */
+html, body, [data-theme] {
+  background-color: #0B0F19 !important;
   color: #F8FAFC !important;
 }
 
-/* Payload Login Container & Form Box */
-.login__wrap, .template-minimal__wrap {
-  background-color: #0D1322 !important;
-  border: 1px solid rgba(0, 200, 255, 0.2) !important;
-  border-radius: 20px !important;
-  box-shadow: 0 20px 50px -10px rgba(0, 200, 255, 0.15) !important;
-  padding: 2.5rem !important;
+/* Header & Sidebar Clean Dark Styling */
+.template-default__nav, .nav, .sidebar {
+  background-color: #080D1A !important;
+  border-right: 1px solid #1E293B !important;
 }
 
-/* Ensure Krylosys Logo is centered and visible */
-.payload-logo {
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  margin-bottom: 1.5rem !important;
+.template-default__header, .app-header {
+  background-color: #080D1A !important;
+  border-bottom: 1px solid #1E293B !important;
 }
 
-/* Standard Input Fields */
-input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="number"],
-textarea,
-select {
-  background-color: #141C2E !important;
+/* Navigation Links Legibility */
+.nav a, .nav__link {
+  color: #CBD5E1 !important;
+  font-weight: 500 !important;
+}
+
+.nav a:hover, .nav__link:hover {
+  color: #00C8FF !important;
+}
+
+.nav a[aria-current="page"], .nav__link--active {
   color: #FFFFFF !important;
-  border: 1px solid #1E293B !important;
-  border-radius: 12px !important;
-  padding: 0.75rem 1rem !important;
+  background-color: rgba(0, 200, 255, 0.12) !important;
+  border-left: 3px solid #00C8FF !important;
+  font-weight: 700 !important;
 }
 
-/* Fix spacing for ALL Payload Search Inputs (high specificity) */
+/* Primary Action Buttons (Create New, Submit) */
+a[href*="/create"],
+.btn--style-primary,
+button[type="submit"] {
+  background-color: #00C8FF !important;
+  color: #060913 !important;
+  font-weight: 700 !important;
+  border-radius: 8px !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(0, 200, 255, 0.3) !important;
+}
+
+a[href*="/create"]:hover,
+.btn--style-primary:hover,
+button[type="submit"]:hover {
+  background-color: #33D6FF !important;
+  color: #060913 !important;
+}
+
+/* Fix Search Inputs Spacing for Magnifying Glass Icon */
 input[type="search"],
 input[type="text"][placeholder*="Search" i],
 input[type="text"][placeholder*="Buscar" i],
 input[type="text"][class*="search" i],
 .search-filter input,
-.search-filter__input,
 .search-bar input,
-.search-bar__input,
-.list-controls input,
-div[class*="search" i] input,
-div[class*="search" i] input[type="text"] {
+.list-controls input {
   padding-left: 2.75rem !important;
-}
-
-input[type="text"]:focus,
-input[type="email"]:focus,
-input[type="password"]:focus,
-textarea:focus,
-select:focus {
-  border-color: #00C8FF !important;
-  box-shadow: 0 0 0 2px rgba(0, 200, 255, 0.25) !important;
-  outline: none !important;
-}
-
-/* Payload React-Select & Custom Dropdowns */
-.rs__control,
-.react-select__control,
-.select-input,
-.field-type.select .rs__control,
-.field-type.relationship .rs__control {
-  background-color: #141C2E !important;
-  border: 1px solid #1E293B !important;
-  border-radius: 12px !important;
-  min-height: 46px !important;
-  color: #FFFFFF !important;
-}
-
-.rs__control--is-focused,
-.react-select__control--is-focused {
-  border-color: #00C8FF !important;
-  box-shadow: 0 0 0 2px rgba(0, 200, 255, 0.25) !important;
-}
-
-.rs__value-container,
-.react-select__value-container {
-  padding: 0.5rem 1rem !important;
-  color: #FFFFFF !important;
-}
-
-.rs__single-value,
-.react-select__single-value {
-  color: #FFFFFF !important;
-}
-
-.rs__placeholder,
-.react-select__placeholder {
-  color: #94A3B8 !important;
-}
-
-/* Prevent internal react-select input from creating a dark box over selected text */
-.rs__input-container,
-.rs__input-container input,
-.rs__input,
-.rs__input input,
-.react-select__input,
-.react-select__input input,
-.field-type.select input,
-.field-type.relationship input {
-  background: transparent !important;
-  background-color: transparent !important;
-  border: none !important;
-  border-radius: 0 !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  box-shadow: none !important;
-  color: #FFFFFF !important;
-}
-
-/* React-Select Dropdown Menu & Options */
-.rs__menu,
-.react-select__menu {
-  background-color: #0D1322 !important;
-  border: 1px solid #1E293B !important;
-  border-radius: 12px !important;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
-  overflow: hidden !important;
-  z-index: 50 !important;
-}
-
-.rs__option,
-.react-select__option {
-  background-color: transparent !important;
-  color: #F8FAFC !important;
-  padding: 0.625rem 1rem !important;
-}
-
-.rs__option--is-focused,
-.react-select__option--is-focused,
-.rs__option:hover,
-.react-select__option:hover {
-  background-color: #1E293B !important;
-  color: #00C8FF !important;
-}
-
-.rs__option--is-selected,
-.react-select__option--is-selected {
-  background-color: #0077FF !important;
-  color: #FFFFFF !important;
-}
-
-/* Field Labels */
-label, .field-label {
-  color: #94A3B8 !important;
-  font-weight: 600 !important;
-  font-size: 0.875rem !important;
-  margin-bottom: 0.5rem !important;
-}
-
-/* Login CTA Button */
-button[type="submit"], .btn--style-primary, .btn--style-secondary {
-  background: linear-gradient(135deg, #00C8FF 0%, #0077FF 100%) !important;
-  color: #FFFFFF !important;
-  font-weight: 700 !important;
-  border-radius: 12px !important;
-  border: none !important;
-  padding: 0.875rem 1.5rem !important;
-  box-shadow: 0 10px 25px -5px rgba(0, 200, 255, 0.3) !important;
-  transition: all 0.2s ease-in-out !important;
-}
-
-button[type="submit"]:hover, .btn--style-primary:hover {
-  background: linear-gradient(135deg, #33D6FF 0%, #1A88FF 100%) !important;
-  box-shadow: 0 12px 30px -5px rgba(0, 200, 255, 0.45) !important;
-  transform: translateY(-1px) !important;
-}
-
-/* Payload Links */
-a {
-  color: #00C8FF !important;
-}
-
-a:hover {
-  color: #33D6FF !important;
 }

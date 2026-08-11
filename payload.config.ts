@@ -28,6 +28,9 @@ export default buildConfig({
         Logo: '/src/components/payload-logo#AdminLogo',
         Icon: '/src/components/payload-logo#AdminIcon',
       },
+      beforeDashboard: [
+        '/src/components/payload-dashboard#AdminDashboard',
+      ],
     },
     importMap: {
       baseDir: path.resolve(dirname),

@@ -76,7 +76,7 @@ export function Logo({ className = "h-8", iconOnly = false }: LogoProps) {
 
       {/* Typography: K R Y L O S Y S */}
       {!iconOnly && (
-        <span className="font-extrabold tracking-wider text-xl md:text-2xl flex items-center">
+        <span className="font-extrabold tracking-tight sm:tracking-wider text-base sm:text-xl md:text-2xl flex items-center shrink-0">
           <span className="text-slate-900 dark:text-slate-100">RYLO</span>
           <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent ml-0.5 drop-shadow-[0_0_8px_rgba(0,200,255,0.4)]">
             SYS

@@ -59,17 +59,17 @@ export function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 w-full z-50 transition-all duration-300 max-w-full ${
         scrolled
           ? "backdrop-blur-2xl backdrop-saturate-150 bg-white/90 dark:bg-[#060913]/85 border-b border-slate-200 dark:border-cyan-500/25 shadow-md shadow-slate-200/50 dark:shadow-cyan-500/5 py-1"
           : "bg-transparent py-3"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 md:h-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div className="flex items-center justify-between h-16 md:h-20 gap-2">
           {/* Brand Logo */}
-          <a href="#inicio" className="flex items-center gap-2 group focus:outline-none focus:ring-2 focus:ring-cyan-500 rounded-lg p-1">
-            <Logo className="h-8 md:h-10 transition-transform group-hover:scale-105 duration-200" />
+          <a href="#inicio" className="flex items-center gap-1.5 sm:gap-2 group focus:outline-none focus:ring-2 focus:ring-cyan-500 rounded-lg p-0.5 sm:p-1 shrink-0">
+            <Logo className="h-7 sm:h-8 md:h-10 transition-transform group-hover:scale-105 duration-200" />
           </a>
 
           {/* Desktop Navigation Links */}
@@ -129,7 +129,7 @@ export function Navbar() {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="flex md:hidden items-center gap-2">
+          <div className="flex md:hidden items-center gap-1.5 sm:gap-2 shrink-0">
             <button
               onClick={toggleTheme}
               className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-cyan-500 focus:outline-none"
@@ -157,7 +157,7 @@ export function Navbar() {
 
       {/* Mobile Drawer Navigation */}
       {mobileMenuOpen && (
-        <div id="mobile-menu" className="md:hidden backdrop-blur-2xl bg-white/95 dark:bg-[#060913]/95 border-b border-slate-200 dark:border-slate-800 px-4 pt-2 pb-6 space-y-3 shadow-2xl">
+        <div id="mobile-menu" className="md:hidden w-full backdrop-blur-2xl bg-white/95 dark:bg-[#060913]/95 border-b border-slate-200 dark:border-slate-800 px-4 pt-2 pb-6 space-y-3 shadow-2xl overflow-hidden">
           {navLinks.map((link) => (
             <a
               key={link.name}

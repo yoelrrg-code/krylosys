@@ -22,15 +22,20 @@ const dirname = path.dirname(filename)
 export default buildConfig({
   admin: {
     user: Users.slug,
-    theme: 'dark',
+    theme: 'light',
     components: {
+      beforeNav: ['/src/components/payload-sidebar-header#SidebarHeader'],
+      afterNav: ['/src/components/payload-sidebar-footer#SidebarFooter'],
+      actions: ['/src/components/payload-header-actions#HeaderActions'],
       graphics: {
         Logo: '/src/components/payload-logo#AdminLogo',
         Icon: '/src/components/payload-logo#AdminIcon',
       },
-      beforeDashboard: [
-        '/src/components/payload-dashboard#AdminDashboard',
-      ],
+      views: {
+        dashboard: {
+          Component: '/src/components/payload-dashboard#AdminDashboard',
+        },
+      },
     },
     importMap: {
       baseDir: path.resolve(dirname),

@@ -1,12 +1,5 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import { siteConfig } from "@/config/site";
 import React from "react";
-
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-});
 
 export default function SiteLayout({
   children,
@@ -103,26 +96,22 @@ export default function SiteLayout({
   };
 
   return (
-    <html lang="es" suppressHydrationWarning className="scroll-smooth">
-      <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-        />
-      </head>
-      <body suppressHydrationWarning className={`${inter.className} antialiased selection:bg-cyan-500 selection:text-white`}>
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 z-50 px-4 py-2 bg-cyan-500 text-white rounded-lg font-bold shadow-lg focus:outline-none"
-        >
-          Saltar al contenido principal
-        </a>
-        {children}
-      </body>
-    </html>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 z-50 px-4 py-2 bg-cyan-500 text-white rounded-lg font-bold shadow-lg focus:outline-none"
+      >
+        Saltar al contenido principal
+      </a>
+      {children}
+    </>
   );
 }

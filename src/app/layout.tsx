@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { siteConfig } from "@/config/site";
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.domain),
@@ -58,5 +64,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return children;
+  return (
+    <html lang="es" suppressHydrationWarning className="scroll-smooth">
+      <body suppressHydrationWarning className={`${inter.className} antialiased selection:bg-cyan-500 selection:text-white`}>
+        {children}
+      </body>
+    </html>
+  );
 }

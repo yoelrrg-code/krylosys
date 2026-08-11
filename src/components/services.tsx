@@ -3,14 +3,25 @@ import { Globe, ShoppingBag, Zap, Code, Check, ArrowRight, Sparkles } from "luci
 import { siteConfig } from "@/config/site";
 
 interface ServicesProps {
+  headerData?: {
+    badge?: string | null;
+    title?: string | null;
+    description?: string | null;
+  } | null;
   data?: any[] | null;
   contactData?: {
-    whatsappNumber?: string;
+    whatsappNumber?: string | null;
   } | null;
 }
 
-export function Services({ data, contactData }: ServicesProps) {
+export function Services({ headerData, data, contactData }: ServicesProps) {
   const whatsappNumber = contactData?.whatsappNumber || siteConfig.contact.whatsappNumber;
+
+  const headerBadge = headerData?.badge || "Nuestras Soluciones";
+  const headerTitle = headerData?.title || "Servicios adaptados a cada etapa de tu empresa";
+  const headerDesc =
+    headerData?.description ||
+    "Ofrecemos el equilibrio perfecto entre tecnología moderna, usabilidad y retorno de inversión.";
 
   const defaultServices = [
     {
@@ -117,16 +128,16 @@ export function Services({ data, contactData }: ServicesProps) {
         <div data-aos="fade-up" className="text-center max-w-3xl mx-auto mb-16 space-y-4">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-pill text-cyan-600 dark:text-cyan-400 text-xs font-bold uppercase tracking-wider">
             <Sparkles className="w-3.5 h-3.5 text-cyan-500" aria-hidden="true" />
-            Nuestras Soluciones
+            {headerBadge}
           </div>
           <h2
             id="services-heading"
             className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight"
           >
-            Servicios adaptados a cada <span className="text-gradient-krylosys">etapa de tu empresa</span>
+            {headerTitle}
           </h2>
           <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300">
-            Ofrecemos el equilibrio perfecto entre tecnología moderna, usabilidad y retorno de inversión.
+            {headerDesc}
           </p>
         </div>
 

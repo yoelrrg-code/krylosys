@@ -4,11 +4,22 @@ import React, { useState } from "react";
 import { FolderGit2, ExternalLink, Code2 } from "lucide-react";
 
 interface ProjectsProps {
+  headerData?: {
+    badge?: string | null;
+    title?: string | null;
+    description?: string | null;
+  } | null;
   data?: any[] | null;
 }
 
-export function Projects({ data }: ProjectsProps) {
+export function Projects({ headerData, data }: ProjectsProps) {
   const [activeCategory, setActiveCategory] = useState("all");
+
+  const headerBadge = headerData?.badge || "Casos de Éxito";
+  const headerTitle = headerData?.title || "Portafolio de desarrollo & proyectos";
+  const headerDesc =
+    headerData?.description ||
+    "Explorá algunos de los proyectos y soluciones desarrolladas para nuestros clientes.";
 
   const categories = [
     { id: "all", label: "Todos los Proyectos" },
@@ -106,16 +117,16 @@ export function Projects({ data }: ProjectsProps) {
         <div data-aos="fade-up" className="text-center max-w-3xl mx-auto mb-12 space-y-4">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-pill text-cyan-600 dark:text-cyan-400 text-xs font-bold uppercase tracking-wider">
             <FolderGit2 className="w-3.5 h-3.5 text-cyan-500" aria-hidden="true" />
-            Casos de Éxito
+            {headerBadge}
           </div>
           <h2
             id="projects-heading"
             className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight"
           >
-            Portafolio de <span className="text-gradient-krylosys">desarrollo & proyectos</span>
+            {headerTitle}
           </h2>
           <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300">
-            Explorá algunos de los proyectos y soluciones desarrolladas para nuestros clientes.
+            {headerDesc}
           </p>
         </div>
 

@@ -23,6 +23,39 @@ export async function getAboutData() {
   }
 }
 
+export async function getServicesHeaderData() {
+  try {
+    const payload = await getPayload({ config })
+    const data = await payload.findGlobal({ slug: 'services-section' })
+    return data
+  } catch (error) {
+    console.error('Error fetching Services section header:', error)
+    return null
+  }
+}
+
+export async function getProjectsHeaderData() {
+  try {
+    const payload = await getPayload({ config })
+    const data = await payload.findGlobal({ slug: 'projects-section' })
+    return data
+  } catch (error) {
+    console.error('Error fetching Projects section header:', error)
+    return null
+  }
+}
+
+export async function getFaqsHeaderData() {
+  try {
+    const payload = await getPayload({ config })
+    const data = await payload.findGlobal({ slug: 'faq-section' })
+    return data
+  } catch (error) {
+    console.error('Error fetching FAQ section header:', error)
+    return null
+  }
+}
+
 export async function getContactData() {
   try {
     const payload = await getPayload({ config })

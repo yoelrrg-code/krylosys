@@ -94,11 +94,17 @@ export interface Config {
   globals: {
     'hero-section': HeroSection;
     'about-section': AboutSection;
+    'services-section': ServicesSection;
+    'projects-section': ProjectsSection;
+    'faq-section': FaqSection;
     'contact-info': ContactInfo;
   };
   globalsSelect: {
     'hero-section': HeroSectionSelect<false> | HeroSectionSelect<true>;
     'about-section': AboutSectionSelect<false> | AboutSectionSelect<true>;
+    'services-section': ServicesSectionSelect<false> | ServicesSectionSelect<true>;
+    'projects-section': ProjectsSectionSelect<false> | ProjectsSectionSelect<true>;
+    'faq-section': FaqSectionSelect<false> | FaqSectionSelect<true>;
     'contact-info': ContactInfoSelect<false> | ContactInfoSelect<true>;
   };
   locale: null;
@@ -428,6 +434,65 @@ export interface AboutSection {
   badge?: string | null;
   title: string;
   description: string;
+  cardMain?: {
+    title?: string | null;
+    description?: string | null;
+    metric1Value?: string | null;
+    metric1Label?: string | null;
+    metric2Value?: string | null;
+    metric2Label?: string | null;
+    metric3Value?: string | null;
+    metric3Label?: string | null;
+  };
+  cardMultiTech?: {
+    title?: string | null;
+    description?: string | null;
+    badge?: string | null;
+  };
+  cardSecurity?: {
+    title?: string | null;
+    description?: string | null;
+  };
+  cardResults?: {
+    title?: string | null;
+    description?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services-section".
+ */
+export interface ServicesSection {
+  id: number;
+  badge?: string | null;
+  title: string;
+  description: string;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects-section".
+ */
+export interface ProjectsSection {
+  id: number;
+  badge?: string | null;
+  title: string;
+  description: string;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq-section".
+ */
+export interface FaqSection {
+  id: number;
+  badge?: string | null;
+  title: string;
+  description: string;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -463,6 +528,73 @@ export interface HeroSectionSelect<T extends boolean = true> {
  * via the `definition` "about-section_select".
  */
 export interface AboutSectionSelect<T extends boolean = true> {
+  badge?: T;
+  title?: T;
+  description?: T;
+  cardMain?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        metric1Value?: T;
+        metric1Label?: T;
+        metric2Value?: T;
+        metric2Label?: T;
+        metric3Value?: T;
+        metric3Label?: T;
+      };
+  cardMultiTech?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        badge?: T;
+      };
+  cardSecurity?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
+  cardResults?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services-section_select".
+ */
+export interface ServicesSectionSelect<T extends boolean = true> {
+  badge?: T;
+  title?: T;
+  description?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects-section_select".
+ */
+export interface ProjectsSectionSelect<T extends boolean = true> {
+  badge?: T;
+  title?: T;
+  description?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq-section_select".
+ */
+export interface FaqSectionSelect<T extends boolean = true> {
   badge?: T;
   title?: T;
   description?: T;

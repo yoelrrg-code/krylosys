@@ -54,9 +54,68 @@ export async function seedDatabase() {
       badge: 'Nosotros',
       title: 'En Krylosys convertimos necesidades complejas en desarrollo simple y efectivo.',
       description: 'Somos un equipo especializado en desarrollo de software y presencia digital de alto impacto para empresas y negocios que exigen soluciones robustas, rápidas y escalables.',
+      cardMain: {
+        title: 'Arquitectura de Software & Rendimiento de Élite',
+        description: 'Diseñamos y programamos con las mejores prácticas de la industria: componentes modulares, optimización SEO de primer nivel, tiempos de respuesta ultra rápidos y cero sobrecarga innecesaria.',
+        metric1Value: '100%',
+        metric1Label: 'Garantía de Calidad',
+        metric2Value: '+50',
+        metric2Label: 'Proyectos Entregados',
+        metric3Value: '24/7',
+        metric3Label: 'Soporte Técnico',
+      },
+      cardMultiTech: {
+        title: 'Soluciones Multi-Tecnología',
+        description: 'Seleccionamos la tecnología perfecta para tu caso: desde sitios autogestionables en WordPress y WooCommerce hasta webs en Next.js.',
+        badge: '✓ Flexibilidad Total',
+      },
+      cardSecurity: {
+        title: 'Seguridad & Código Limpio',
+        description: 'Implementamos protocolos de seguridad avanzada y mejores prácticas de optimización de código para garantizar confiabilidad y protección continua.',
+      },
+      cardResults: {
+        title: 'Enfoque en Resultados & Conversión',
+        description: 'No solo construimos código: diseñamos cada interfaz orientada a maximizar tus conversiones, la retención de usuarios y el impacto comercial de tu marca.',
+      },
     },
   })
   console.log('✓ Sección Nosotros actualizada.')
+
+  // 4. Services Section Header Global
+  console.log('Actualizando Encabezado Sección Servicios...')
+  await payload.updateGlobal({
+    slug: 'services-section',
+    data: {
+      badge: 'Nuestras Soluciones',
+      title: 'Servicios adaptados a cada etapa de tu empresa',
+      description: 'Ofrecemos el equilibrio perfecto entre tecnología moderna, usabilidad y retorno de inversión.',
+    },
+  })
+  console.log('✓ Encabezado Sección Servicios actualizado.')
+
+  // 5. Projects Section Header Global
+  console.log('Actualizando Encabezado Sección Proyectos...')
+  await payload.updateGlobal({
+    slug: 'projects-section',
+    data: {
+      badge: 'Casos de Éxito',
+      title: 'Portafolio de desarrollo & proyectos',
+      description: 'Explorá algunos de los proyectos y soluciones desarrolladas para nuestros clientes.',
+    },
+  })
+  console.log('✓ Encabezado Sección Proyectos actualizado.')
+
+  // 6. FAQ Section Header Global
+  console.log('Actualizando Encabezado Sección FAQ...')
+  await payload.updateGlobal({
+    slug: 'faq-section',
+    data: {
+      badge: 'Preguntas Frecuentes',
+      title: 'Resolvemos tus dudas sobre desarrollo web y software',
+      description: 'Todo lo que necesitás saber antes de iniciar tu próximo proyecto con Krylosys.',
+    },
+  })
+  console.log('✓ Encabezado Sección FAQ actualizado.')
 
   // 4. Contact Info Global
   console.log('Actualizando Información de Contacto...')

@@ -6,6 +6,29 @@ interface AboutProps {
     badge?: string | null;
     title?: string | null;
     description?: string | null;
+    cardMain?: {
+      title?: string | null;
+      description?: string | null;
+      metric1Value?: string | null;
+      metric1Label?: string | null;
+      metric2Value?: string | null;
+      metric2Label?: string | null;
+      metric3Value?: string | null;
+      metric3Label?: string | null;
+    } | null;
+    cardMultiTech?: {
+      title?: string | null;
+      description?: string | null;
+      badge?: string | null;
+    } | null;
+    cardSecurity?: {
+      title?: string | null;
+      description?: string | null;
+    } | null;
+    cardResults?: {
+      title?: string | null;
+      description?: string | null;
+    } | null;
   } | null;
 }
 
@@ -15,6 +38,37 @@ export function About({ data }: AboutProps) {
   const description =
     data?.description ||
     "Somos un equipo especializado en desarrollo de software y presencia digital de alto impacto para empresas y negocios que exigen soluciones robustas, rápidas y escalables.";
+
+  // Card 1 Data
+  const cardMainTitle = data?.cardMain?.title || "Arquitectura de Software & Rendimiento de Élite";
+  const cardMainDesc =
+    data?.cardMain?.description ||
+    "Diseñamos y programamos con las mejores prácticas de la industria: componentes modulares, optimización SEO de primer nivel, tiempos de respuesta ultra rápidos y cero sobrecarga innecesaria.";
+  const metric1Val = data?.cardMain?.metric1Value || "100%";
+  const metric1Lbl = data?.cardMain?.metric1Label || "Garantía de Calidad";
+  const metric2Val = data?.cardMain?.metric2Value || "+50";
+  const metric2Lbl = data?.cardMain?.metric2Label || "Proyectos Entregados";
+  const metric3Val = data?.cardMain?.metric3Value || "24/7";
+  const metric3Lbl = data?.cardMain?.metric3Label || "Soporte Técnico";
+
+  // Card 2 Data
+  const cardMultiTitle = data?.cardMultiTech?.title || "Soluciones Multi-Tecnología";
+  const cardMultiDesc =
+    data?.cardMultiTech?.description ||
+    "Seleccionamos la tecnología perfecta para tu caso: desde sitios autogestionables en WordPress y WooCommerce hasta webs en Next.js.";
+  const cardMultiBadge = data?.cardMultiTech?.badge || "✓ Flexibilidad Total";
+
+  // Card 3 Data
+  const cardSecTitle = data?.cardSecurity?.title || "Seguridad & Código Limpio";
+  const cardSecDesc =
+    data?.cardSecurity?.description ||
+    "Implementamos protocolos de seguridad avanzada y mejores prácticas de optimización de código para garantizar confiabilidad y protección continua.";
+
+  // Card 4 Data
+  const cardResTitle = data?.cardResults?.title || "Enfoque en Resultados & Conversión";
+  const cardResDesc =
+    data?.cardResults?.description ||
+    "No solo construimos código: diseñamos cada interfaz orientada a maximizar tus conversiones, la retención de usuarios y el impacto comercial de tu marca.";
 
   return (
     <section
@@ -56,26 +110,26 @@ export function About({ data }: AboutProps) {
                 <Cpu className="w-7 h-7" aria-hidden="true" />
               </div>
               <h3 className="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white mb-4">
-                Arquitectura de Software & Rendimiento de Élite
+                {cardMainTitle}
               </h3>
               <p className="text-slate-600 dark:text-slate-300 text-base leading-relaxed max-w-2xl">
-                Diseñamos y programamos con las mejores prácticas de la industria: componentes modulares, optimización SEO de primer nivel, tiempos de respuesta ultra rápidos y cero sobrecarga innecesaria.
+                {cardMainDesc}
               </p>
             </div>
 
             {/* Metrics Counter Bar */}
             <div className="mt-8 pt-6 border-t border-slate-200/80 dark:border-slate-800 grid grid-cols-3 gap-4">
               <div>
-                <div className="text-2xl sm:text-3xl font-extrabold text-cyan-500 dark:text-cyan-400">100%</div>
-                <div className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-semibold">Garantía de Calidad</div>
+                <div className="text-2xl sm:text-3xl font-extrabold text-cyan-500 dark:text-cyan-400">{metric1Val}</div>
+                <div className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-semibold">{metric1Lbl}</div>
               </div>
               <div>
-                <div className="text-2xl sm:text-3xl font-extrabold text-blue-600 dark:text-blue-400">+50</div>
-                <div className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-semibold">Proyectos Entregados</div>
+                <div className="text-2xl sm:text-3xl font-extrabold text-blue-600 dark:text-blue-400">{metric2Val}</div>
+                <div className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-semibold">{metric2Lbl}</div>
               </div>
               <div>
-                <div className="text-2xl sm:text-3xl font-extrabold text-cyan-400">24/7</div>
-                <div className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-semibold">Soporte Técnico</div>
+                <div className="text-2xl sm:text-3xl font-extrabold text-cyan-400">{metric3Val}</div>
+                <div className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-semibold">{metric3Lbl}</div>
               </div>
             </div>
           </div>
@@ -91,15 +145,15 @@ export function About({ data }: AboutProps) {
                 <Layers className="w-6 h-6" aria-hidden="true" />
               </div>
               <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">
-                Soluciones Multi-Tecnología
+                {cardMultiTitle}
               </h3>
               <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                Seleccionamos la tecnología perfecta para tu caso: desde sitios autogestionables en WordPress y WooCommerce hasta webs en Next.js.
+                {cardMultiDesc}
               </p>
             </div>
 
             <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 text-xs font-semibold text-cyan-600 dark:text-cyan-400">
-              ✓ Flexibilidad Total
+              {cardMultiBadge}
             </div>
           </div>
 
@@ -113,10 +167,10 @@ export function About({ data }: AboutProps) {
               <ShieldCheck className="w-6 h-6" aria-hidden="true" />
             </div>
             <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">
-              Seguridad & Código Limpio
+              {cardSecTitle}
             </h3>
             <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-              Implementamos protocolos de seguridad avanzada y mejores prácticas de optimización de código para garantizar confiabilidad y protección continua.
+              {cardSecDesc}
             </p>
           </div>
 
@@ -130,10 +184,10 @@ export function About({ data }: AboutProps) {
               <Rocket className="w-6 h-6" aria-hidden="true" />
             </div>
             <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">
-              Enfoque en Resultados & Conversión
+              {cardResTitle}
             </h3>
             <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-              No solo construimos código: diseñamos cada interfaz orientada a maximizar tus conversiones, la retención de usuarios y el impacto comercial de tu marca.
+              {cardResDesc}
             </p>
           </div>
 

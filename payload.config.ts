@@ -11,6 +11,9 @@ import { FAQs } from './src/collections/FAQs'
 
 import { HeroSection } from './src/globals/HeroSection'
 import { AboutSection } from './src/globals/AboutSection'
+import { ServicesSection } from './src/globals/ServicesSection'
+import { ProjectsSection } from './src/globals/ProjectsSection'
+import { FaqSection } from './src/globals/FaqSection'
 import { ContactInfo } from './src/globals/ContactInfo'
 
 const filename = fileURLToPath(import.meta.url)
@@ -31,7 +34,7 @@ export default buildConfig({
     },
   },
   collections: [Users, Services, Projects, FAQs],
-  globals: [HeroSection, AboutSection, ContactInfo],
+  globals: [HeroSection, AboutSection, ServicesSection, ProjectsSection, FaqSection, ContactInfo],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || 'krylosys-super-secret-key-2026-secure-token',
   typescript: {

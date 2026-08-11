@@ -4,11 +4,22 @@ import React, { useState } from "react";
 import { ChevronDown, HelpCircle } from "lucide-react";
 
 interface FAQProps {
+  headerData?: {
+    badge?: string | null;
+    title?: string | null;
+    description?: string | null;
+  } | null;
   data?: any[] | null;
 }
 
-export function FAQ({ data }: FAQProps) {
+export function FAQ({ headerData, data }: FAQProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+
+  const headerBadge = headerData?.badge || "Preguntas Frecuentes";
+  const headerTitle = headerData?.title || "Resolvemos tus dudas sobre desarrollo web y software";
+  const headerDesc =
+    headerData?.description ||
+    "Todo lo que necesitás saber antes de iniciar tu próximo proyecto con Krylosys.";
 
   const defaultFaqs = [
     {
@@ -62,16 +73,16 @@ export function FAQ({ data }: FAQProps) {
         <div data-aos="fade-up" className="text-center max-w-3xl mx-auto mb-16 space-y-4">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-pill text-cyan-600 dark:text-cyan-400 text-xs font-bold uppercase tracking-wider">
             <HelpCircle className="w-3.5 h-3.5 text-cyan-500" aria-hidden="true" />
-            Preguntas Frecuentes
+            {headerBadge}
           </div>
           <h2
             id="faq-heading"
             className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight"
           >
-            Resolvemos tus dudas sobre <span className="text-gradient-krylosys">desarrollo web y software</span>
+            {headerTitle}
           </h2>
           <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300">
-            Todo lo que necesitás saber antes de iniciar tu próximo proyecto con Krylosys.
+            {headerDesc}
           </p>
         </div>
 

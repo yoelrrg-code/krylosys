@@ -12,6 +12,9 @@ import { Footer } from "@/components/footer";
 import {
   getHeroData,
   getAboutData,
+  getServicesHeaderData,
+  getProjectsHeaderData,
+  getFaqsHeaderData,
   getContactData,
   getServicesData,
   getProjectsData,
@@ -21,15 +24,27 @@ import {
 export const revalidate = 0;
 
 export default async function Home() {
-  const [heroData, aboutData, contactData, servicesData, projectsData, faqsData] =
-    await Promise.all([
-      getHeroData(),
-      getAboutData(),
-      getContactData(),
-      getServicesData(),
-      getProjectsData(),
-      getFaqsData(),
-    ]);
+  const [
+    heroData,
+    aboutData,
+    servicesHeaderData,
+    projectsHeaderData,
+    faqsHeaderData,
+    contactData,
+    servicesData,
+    projectsData,
+    faqsData,
+  ] = await Promise.all([
+    getHeroData(),
+    getAboutData(),
+    getServicesHeaderData(),
+    getProjectsHeaderData(),
+    getFaqsHeaderData(),
+    getContactData(),
+    getServicesData(),
+    getProjectsData(),
+    getFaqsData(),
+  ]);
 
   return (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
@@ -41,9 +56,9 @@ export default async function Home() {
           <Navbar contactData={contactData} />
           <Hero data={heroData} contactData={contactData} />
           <About data={aboutData} />
-          <Services data={servicesData} contactData={contactData} />
-          <Projects data={projectsData} />
-          <FAQ data={faqsData} />
+          <Services headerData={servicesHeaderData} data={servicesData} contactData={contactData} />
+          <Projects headerData={projectsHeaderData} data={projectsData} />
+          <FAQ headerData={faqsHeaderData} data={faqsData} />
           <Contact contactData={contactData} />
           <Footer />
         </main>

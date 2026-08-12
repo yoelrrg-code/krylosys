@@ -121,8 +121,8 @@ export default function GlobalEditPage() {
 
         if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
           return (
-            <div key={fullKey} className="p-4 bg-zinc-50 border border-zinc-200 rounded-lg space-y-3">
-              <h4 className="font-bold text-xs text-zinc-900 border-b border-zinc-200 pb-2">
+            <div key={fullKey} className="p-4 bg-[#0B0F19] border border-slate-800 rounded-lg space-y-3">
+              <h4 className="font-bold text-xs text-slate-100 border-b border-slate-800 pb-2">
                 {getFieldLabel(key)}
               </h4>
               {renderInputs(value as Record<string, unknown>, fullKey)}
@@ -132,11 +132,11 @@ export default function GlobalEditPage() {
 
         if (Array.isArray(value)) {
           return (
-            <div key={fullKey} className="p-4 bg-zinc-50 border border-zinc-200 rounded-lg space-y-2">
-              <h4 className="font-bold text-xs text-zinc-900">
+            <div key={fullKey} className="p-4 bg-[#0B0F19] border border-slate-800 rounded-lg space-y-2">
+              <h4 className="font-bold text-xs text-slate-100">
                 {getFieldLabel(key)} (Lista de {value.length} elementos)
               </h4>
-              <p className="text-[11px] text-zinc-500">Edición de lista en formato JSON</p>
+              <p className="text-[11px] text-slate-400">Edición de lista en formato JSON</p>
               <textarea
                 value={JSON.stringify(value, null, 2)}
                 onChange={(e) => {
@@ -155,7 +155,7 @@ export default function GlobalEditPage() {
                   } catch {}
                 }}
                 rows={4}
-                className="w-full p-2 bg-white border border-zinc-200 rounded-md font-mono text-[11px] text-zinc-900 focus:outline-none focus:border-zinc-900"
+                className="w-full p-2 bg-[#060913] border border-slate-800 rounded-md font-mono text-[11px] text-slate-100 focus:outline-none focus:border-cyan-500"
               />
             </div>
           )
@@ -163,7 +163,7 @@ export default function GlobalEditPage() {
 
         return (
           <div key={fullKey} className="space-y-1">
-            <label className="block text-xs font-semibold text-zinc-700">
+            <label className="block text-xs font-semibold text-slate-300">
               {getFieldLabel(key)}
             </label>
             {typeof value === 'string' && value.length > 80 ? (
@@ -185,7 +185,7 @@ export default function GlobalEditPage() {
                   })
                 }}
                 rows={3}
-                className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-xs text-zinc-900 focus:outline-none focus:border-zinc-900"
+                className="w-full px-3 py-2 bg-[#060913] border border-slate-800 rounded-md text-xs text-slate-100 focus:outline-none focus:border-cyan-500"
               />
             ) : (
               <input
@@ -206,7 +206,7 @@ export default function GlobalEditPage() {
                     return updated
                   })
                 }}
-                className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-md text-xs text-zinc-900 focus:outline-none focus:border-zinc-900"
+                className="w-full px-3 py-2 bg-[#060913] border border-slate-800 rounded-md text-xs text-slate-100 focus:outline-none focus:border-cyan-500"
               />
             )}
           </div>
@@ -222,17 +222,17 @@ export default function GlobalEditPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => router.push('/admin')}
-            className="p-1.5 rounded-md border border-zinc-200 text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100 transition-colors"
+            className="p-1.5 rounded-md border border-slate-800 text-slate-400 hover:text-slate-100 hover:bg-slate-800 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
-            <div className="text-xs text-zinc-500 flex items-center gap-1.5 font-medium">
+            <div className="text-xs text-slate-400 flex items-center gap-1.5 font-medium">
               <span>Admin</span>
               <span>/</span>
               <span>Secciones Globales</span>
             </div>
-            <h1 className="text-2xl font-bold text-zinc-950 tracking-tight">
+            <h1 className="text-2xl font-bold text-slate-100 tracking-tight">
               {getGlobalTitle(slug)}
             </h1>
           </div>
@@ -241,12 +241,12 @@ export default function GlobalEditPage() {
         <button
           onClick={handleSubmit}
           disabled={saving}
-          className="inline-flex items-center gap-2 bg-zinc-950 hover:bg-zinc-800 text-white font-medium px-4 py-2 rounded-md text-xs shadow-2xs transition-colors"
+          className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold px-4 py-2 rounded-md text-xs shadow-md shadow-cyan-500/10 transition-all"
         >
           {saving ? (
             <Loader2 className="w-4 h-4 animate-spin" />
           ) : savedSuccess ? (
-            <Check className="w-4 h-4 text-emerald-400" />
+            <Check className="w-4 h-4 text-slate-950 font-extrabold" />
           ) : (
             <Save className="w-4 h-4" />
           )}
@@ -255,10 +255,10 @@ export default function GlobalEditPage() {
       </div>
 
       {/* Form Container */}
-      <div className="bg-white border border-zinc-200 rounded-xl p-6 shadow-2xs space-y-6">
+      <div className="bg-[#0D1322] border border-slate-800 rounded-xl p-6 space-y-6">
         {loading ? (
-          <div className="p-12 flex flex-col items-center justify-center gap-3 text-zinc-400">
-            <Loader2 className="w-6 h-6 animate-spin text-zinc-900" />
+          <div className="p-12 flex flex-col items-center justify-center gap-3 text-slate-400">
+            <Loader2 className="w-6 h-6 animate-spin text-cyan-400" />
             <span className="text-xs font-medium">Cargando configuración global...</span>
           </div>
         ) : (

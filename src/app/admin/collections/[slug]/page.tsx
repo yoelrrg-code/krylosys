@@ -199,21 +199,21 @@ export default function CollectionListPage() {
     <div className="space-y-6 max-w-7xl mx-auto select-none">
       
       {/* Breadcrumb */}
-      <div className="text-xs text-zinc-500 flex items-center gap-1.5 font-medium">
+      <div className="text-xs text-slate-400 flex items-center gap-1.5 font-medium">
         <span>Admin</span>
         <span>/</span>
-        <span className="text-zinc-900 font-semibold">{getCollectionTitle(slug)}</span>
+        <span className="text-slate-100 font-semibold">{getCollectionTitle(slug)}</span>
       </div>
 
       {/* Header Row */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <h1 className="text-3xl font-bold text-zinc-950 tracking-tight">
+          <h1 className="text-3xl font-bold text-slate-100 tracking-tight">
             {getCollectionTitle(slug)}
           </h1>
           <button
             onClick={handleOpenCreate}
-            className="inline-flex items-center gap-1.5 bg-zinc-950 hover:bg-zinc-800 text-white font-medium px-3.5 py-1.5 rounded-md text-xs shadow-2xs transition-colors"
+            className="inline-flex items-center gap-1.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold px-3.5 py-1.5 rounded-md text-xs shadow-md shadow-cyan-500/10 transition-all"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Crear Nuevo</span>
@@ -222,50 +222,50 @@ export default function CollectionListPage() {
       </div>
 
       {/* Filter & Controls Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3 border border-zinc-200 rounded-xl shadow-2xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#0D1322] p-3 border border-slate-800 rounded-xl">
         
         <div className="relative flex items-center flex-1 max-w-md">
-          <Search className="w-4 h-4 absolute left-3 text-zinc-400 pointer-events-none" />
+          <Search className="w-4 h-4 absolute left-3 text-slate-500 pointer-events-none" />
           <input
             type="text"
             placeholder={`Buscar por ${slug === 'users' ? 'email o nombre' : 'título'}...`}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-4 py-1.5 bg-white border border-zinc-200 rounded-md text-xs text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:border-zinc-400 transition-all"
+            className="w-full pl-9 pr-4 py-1.5 bg-[#060913] border border-slate-800 rounded-md text-xs text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-cyan-500 transition-all"
           />
         </div>
 
         <div className="flex items-center gap-2">
-          <button className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-100/80 hover:bg-zinc-200/80 border border-zinc-200 rounded-md text-xs font-medium text-zinc-900 transition-colors">
-            <Columns className="w-3.5 h-3.5 text-zinc-500" />
+          <button className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-md text-xs font-medium text-slate-300 transition-colors">
+            <Columns className="w-3.5 h-3.5 text-slate-400" />
             <span>Columnas</span>
-            <ChevronDown className="w-3 h-3 text-zinc-400" />
+            <ChevronDown className="w-3 h-3 text-slate-500" />
           </button>
 
-          <button className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-100/80 hover:bg-zinc-200/80 border border-zinc-200 rounded-md text-xs font-medium text-zinc-900 transition-colors">
-            <Filter className="w-3.5 h-3.5 text-zinc-500" />
+          <button className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-md text-xs font-medium text-slate-300 transition-colors">
+            <Filter className="w-3.5 h-3.5 text-slate-400" />
             <span>Filtros</span>
-            <ChevronDown className="w-3 h-3 text-zinc-400" />
+            <ChevronDown className="w-3 h-3 text-slate-500" />
           </button>
         </div>
 
       </div>
 
       {/* Data Table */}
-      <div className="bg-white border border-zinc-200 rounded-xl shadow-2xs overflow-hidden">
+      <div className="bg-[#0D1322] border border-slate-800 rounded-xl overflow-hidden">
         {loading ? (
-          <div className="p-12 flex flex-col items-center justify-center gap-3 text-zinc-400">
-            <Loader2 className="w-6 h-6 animate-spin text-zinc-900" />
+          <div className="p-12 flex flex-col items-center justify-center gap-3 text-slate-400">
+            <Loader2 className="w-6 h-6 animate-spin text-cyan-400" />
             <span className="text-xs font-medium">Cargando datos de la colección...</span>
           </div>
         ) : filteredItems.length === 0 ? (
-          <div className="p-12 text-center text-zinc-500 text-xs">
+          <div className="p-12 text-center text-slate-400 text-xs">
             No se encontraron registros en esta colección.
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-zinc-50 border-b border-zinc-200 text-zinc-500 font-semibold uppercase tracking-wider text-[11px]">
+              <thead className="bg-[#0B0F19] border-b border-slate-800 text-slate-400 font-semibold uppercase tracking-wider text-[11px]">
                 <tr>
                   <th className="p-3.5 pl-5"># ID</th>
                   {slug === 'users' && (
@@ -300,17 +300,17 @@ export default function CollectionListPage() {
                   <th className="p-3.5 text-right pr-5">Acciones</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-100 text-zinc-900">
+              <tbody className="divide-y divide-slate-800/60 text-slate-200">
                 {filteredItems.map((item) => (
-                  <tr key={item.id} className="hover:bg-zinc-50/70 transition-colors">
-                    <td className="p-3.5 pl-5 font-mono text-zinc-400 text-[11px]">{item.id}</td>
+                  <tr key={item.id} className="hover:bg-slate-800/40 transition-colors">
+                    <td className="p-3.5 pl-5 font-mono text-slate-500 text-[11px]">{item.id}</td>
                     
                     {slug === 'users' && (
                       <>
-                        <td className="p-3.5 font-medium">{item.email}</td>
-                        <td className="p-3.5 text-zinc-600">{item.name || item.fullName || 'Yoelkys - Admin Krylosys'}</td>
+                        <td className="p-3.5 font-medium text-slate-100">{item.email}</td>
+                        <td className="p-3.5 text-slate-300">{item.name || item.fullName || 'Yoelkys - Admin Krylosys'}</td>
                         <td className="p-3.5">
-                          <span className="inline-flex px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-800 text-[10px] font-bold uppercase">
+                          <span className="inline-flex px-2 py-0.5 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-[10px] font-bold uppercase">
                             {item.role || 'Administrador'}
                           </span>
                         </td>
@@ -319,12 +319,14 @@ export default function CollectionListPage() {
 
                     {slug === 'services' && (
                       <>
-                        <td className="p-3.5 font-semibold text-zinc-950">{String(item.title || '')}</td>
-                        <td className="p-3.5 text-zinc-600 font-medium">{String(item.badge || '')}</td>
-                        <td className="p-3.5 text-zinc-500">{String(item.score || '')}</td>
+                        <td className="p-3.5 font-semibold text-slate-100">{String(item.title || '')}</td>
+                        <td className="p-3.5 text-slate-300 font-medium">{String(item.badge || '')}</td>
+                        <td className="p-3.5 text-slate-400">{String(item.score || '')}</td>
                         <td className="p-3.5">
                           <span className={`inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold ${
-                            item.highlight ? 'bg-amber-100 text-amber-800 border border-amber-200' : 'bg-zinc-100 text-zinc-500'
+                            item.highlight
+                              ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20'
+                              : 'bg-slate-800 text-slate-400'
                           }`}>
                             {item.highlight ? 'Destacado' : 'Estándar'}
                           </span>
@@ -334,38 +336,38 @@ export default function CollectionListPage() {
 
                     {slug === 'projects' && (
                       <>
-                        <td className="p-3.5 font-semibold text-zinc-950">{String(item.title || '')}</td>
+                        <td className="p-3.5 font-semibold text-slate-100">{String(item.title || '')}</td>
                         <td className="p-3.5">
-                          <span className="inline-flex px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-800 text-[10px] font-semibold uppercase">
+                          <span className="inline-flex px-2 py-0.5 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-[10px] font-bold uppercase">
                             {String(item.category || '')}
                           </span>
                         </td>
-                        <td className="p-3.5 text-zinc-500">{String(item.metrics || '')}</td>
+                        <td className="p-3.5 text-slate-400">{String(item.metrics || '')}</td>
                       </>
                     )}
 
                     {slug === 'faqs' && (
                       <>
-                        <td className="p-3.5 font-semibold text-zinc-950">{item.question}</td>
-                        <td className="p-3.5 font-medium text-zinc-400">{item.order}</td>
+                        <td className="p-3.5 font-semibold text-slate-100">{item.question}</td>
+                        <td className="p-3.5 font-medium text-slate-400">{item.order}</td>
                       </>
                     )}
 
-                    <td className="p-3.5 text-zinc-400 text-[11px]">
+                    <td className="p-3.5 text-slate-500 text-[11px]">
                       {item.updatedAt ? new Date(item.updatedAt).toLocaleDateString() : 'Reciente'}
                     </td>
 
                     <td className="p-3.5 text-right pr-5 space-x-2">
                       <button
                         onClick={() => handleOpenEdit(item)}
-                        className="p-1.5 rounded-md border border-zinc-200 text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100 transition-colors"
+                        className="p-1.5 rounded-md border border-slate-800 bg-slate-900 text-slate-300 hover:text-cyan-400 hover:border-cyan-500/40 hover:bg-slate-800 transition-colors"
                         title="Editar"
                       >
                         <Edit className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => item.id !== undefined && handleDelete(item.id)}
-                        className="p-1.5 rounded-md border border-zinc-200 text-red-600 hover:bg-red-50 transition-colors"
+                        className="p-1.5 rounded-md border border-slate-800 bg-slate-900 text-red-400 hover:bg-red-500/10 hover:border-red-500/30 transition-colors"
                         title="Eliminar"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -380,26 +382,26 @@ export default function CollectionListPage() {
       </div>
 
       {/* Pagination Footer */}
-      <div className="flex items-center justify-between text-xs text-zinc-500 px-1 select-none">
+      <div className="flex items-center justify-between text-xs text-slate-400 px-1 select-none">
         <span>1-{filteredItems.length} de {filteredItems.length}</span>
         <div className="flex items-center gap-1 font-medium">
           <span>Por página: 10</span>
-          <ChevronDown className="w-3 h-3 text-zinc-400" />
+          <ChevronDown className="w-3 h-3 text-slate-500" />
         </div>
       </div>
 
       {/* Create / Edit Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-2xs flex items-center justify-center p-4">
-          <div className="bg-white border border-zinc-200 rounded-xl max-w-lg w-full p-6 shadow-xl space-y-4">
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-[#0D1322] border border-slate-800 rounded-xl max-w-lg w-full p-6 shadow-2xl space-y-4 text-slate-100">
             
-            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
-              <h3 className="text-base font-bold text-zinc-950">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <h3 className="text-base font-bold text-slate-100">
                 {editingItem ? `Editar en ${getCollectionTitle(slug)}` : `Nuevo Registro en ${getCollectionTitle(slug)}`}
               </h3>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="p-1 rounded-md text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100"
+                className="p-1 rounded-md text-slate-400 hover:text-slate-100 hover:bg-slate-800"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -412,14 +414,14 @@ export default function CollectionListPage() {
                   const val = formData[key]
                   return (
                     <div key={key} className="space-y-1">
-                      <label className="block font-semibold text-zinc-700">
+                      <label className="block font-semibold text-slate-300">
                         {getFieldLabel(key)}
                       </label>
                       {key === 'role' ? (
                         <select
                           value={(val as string) ?? 'admin'}
                           onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
-                          className="w-full px-3 py-2 border border-zinc-200 rounded-md text-xs text-zinc-900 bg-white focus:outline-none focus:border-zinc-900"
+                          className="w-full px-3 py-2 border border-slate-800 rounded-md text-xs text-slate-100 bg-[#060913] focus:outline-none focus:border-cyan-500"
                         >
                           <option value="admin">Administrador (admin)</option>
                           <option value="editor">Editor (editor)</option>
@@ -428,7 +430,7 @@ export default function CollectionListPage() {
                         <select
                           value={(val as string) ?? 'custom'}
                           onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
-                          className="w-full px-3 py-2 border border-zinc-200 rounded-md text-xs text-zinc-900 bg-white focus:outline-none focus:border-zinc-900"
+                          className="w-full px-3 py-2 border border-slate-800 rounded-md text-xs text-slate-100 bg-[#060913] focus:outline-none focus:border-cyan-500"
                         >
                           <option value="nextjs">Next.js & React (nextjs)</option>
                           <option value="wordpress">WordPress (wordpress)</option>
@@ -440,7 +442,7 @@ export default function CollectionListPage() {
                           rows={3}
                           value={(val as string) ?? ''}
                           onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
-                          className="w-full px-3 py-2 border border-zinc-200 rounded-md text-xs text-zinc-900 focus:outline-none focus:border-zinc-900"
+                          className="w-full px-3 py-2 border border-slate-800 rounded-md text-xs text-slate-100 bg-[#060913] focus:outline-none focus:border-cyan-500"
                           required={key === 'description' || key === 'answer'}
                         />
                       ) : key === 'highlight' ? (
@@ -449,9 +451,9 @@ export default function CollectionListPage() {
                             type="checkbox"
                             checked={Boolean(val)}
                             onChange={(e) => setFormData({ ...formData, [key]: e.target.checked })}
-                            className="w-4 h-4 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-950 cursor-pointer"
+                            className="w-4 h-4 rounded border-slate-700 bg-[#060913] text-cyan-500 focus:ring-cyan-500 cursor-pointer"
                           />
-                          <span className="text-zinc-600">Destacar servicio en portada</span>
+                          <span className="text-slate-300">Destacar servicio en portada</span>
                         </div>
                       ) : (
                         <div>
@@ -463,11 +465,11 @@ export default function CollectionListPage() {
                                 : (val as string | number) ?? ''
                             }
                             onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
-                            className="w-full px-3 py-2 border border-zinc-200 rounded-md text-xs text-zinc-900 focus:outline-none focus:border-zinc-900"
+                            className="w-full px-3 py-2 border border-slate-800 rounded-md text-xs text-slate-100 bg-[#060913] focus:outline-none focus:border-cyan-500"
                             required={key === 'title' || key === 'email' || key === 'question'}
                           />
                           {(key === 'tags' || key === 'features') && (
-                            <p className="text-[11px] text-zinc-400 mt-1">
+                            <p className="text-[11px] text-slate-400 mt-1">
                               Separa los elementos por comas (ej. React, Next.js, Tailwind)
                             </p>
                           )}
@@ -477,18 +479,18 @@ export default function CollectionListPage() {
                   )
                 })}
 
-              <div className="flex items-center justify-end gap-2 pt-4 border-t border-zinc-100">
+              <div className="flex items-center justify-end gap-2 pt-4 border-t border-slate-800">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 border border-zinc-200 rounded-md text-xs font-medium text-zinc-700 hover:bg-zinc-50"
+                  className="px-4 py-2 border border-slate-800 bg-slate-900 rounded-md text-xs font-medium text-slate-300 hover:bg-slate-800"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-4 py-2 bg-zinc-950 hover:bg-zinc-800 text-white rounded-md text-xs font-medium shadow-2xs inline-flex items-center gap-1.5"
+                  className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold rounded-md text-xs shadow-md inline-flex items-center gap-1.5"
                 >
                   {submitting && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                   <span>{editingItem ? 'Guardar Cambios' : 'Crear Registro'}</span>

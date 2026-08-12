@@ -1,68 +1,75 @@
 'use client'
 
-import React from 'react'
-import { Search, Bell, Sun, UserPlus, PanelLeft } from 'lucide-react'
+import React, { useState, useRef, useEffect } from 'react'
+import Link from 'next/link'
+import { PanelLeft, LogOut } from 'lucide-react'
 
 interface AdminHeaderProps {
   onToggleSidebar?: () => void
+  currentUser?: { email?: string; name?: string; role?: string } | null
 }
 
-export function AdminHeader({ onToggleSidebar }: AdminHeaderProps) {
+export function AdminHeader({ onToggleSidebar, currentUser }: AdminHeaderProps) {
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  const userName = currentUser?.name || 'Yoelkys R Rodriguez Gonzalez'
+  const userEmail = currentUser?.email || 'yoelkys.rrg@gmail.com'
+  const userInitial = userName.charAt(0).toUpperCase() || 'Y'
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
   return (
-    <header className="h-14 border-b border-zinc-200 bg-white px-6 flex items-center justify-between sticky top-0 z-30 select-none">
+    <header className="h-14 border-b border-slate-800 bg-[#0B0F19] px-6 flex items-center justify-between sticky top-0 z-30 select-none">
       
-      {/* Left side: Sidebar toggle & Search input */}
+      {/* Left side: Sidebar toggle only */}
       <div className="flex items-center gap-4">
         <button
           onClick={onToggleSidebar}
           title="Ocultar / Mostrar barra lateral"
-          className="w-8 h-8 rounded-md border border-zinc-200 flex items-center justify-center text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50 transition-colors"
+          className="w-8 h-8 rounded-md border border-slate-800 bg-slate-900/60 flex items-center justify-center text-slate-400 hover:text-cyan-400 hover:border-cyan-500/30 hover:bg-slate-800/80 transition-all"
         >
           <PanelLeft className="w-4 h-4" />
         </button>
-
-        <div className="relative flex items-center w-64">
-          <Search className="w-4 h-4 absolute left-3 text-zinc-400 pointer-events-none" />
-          <input
-            type="text"
-            placeholder="Buscar..."
-            className="w-full pl-9 pr-4 py-1.5 bg-zinc-50 border border-zinc-200 rounded-md text-xs text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:border-zinc-400 focus:bg-white transition-all"
-          />
-        </div>
       </div>
 
-      {/* Right side: Controls */}
-      <div className="flex items-center gap-3">
-        
-        {/* Bell Button */}
-        <button className="w-8 h-8 rounded-md border border-zinc-200 flex items-center justify-center text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50 transition-colors">
-          <Bell className="w-4 h-4" />
+      {/* Right side: User Avatar & Dropdown Menu */}
+      <div className="relative" ref={dropdownRef}>
+        <button
+          onClick={() => setDropdownOpen((prev) => !prev)}
+          className="w-9 h-9 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 text-slate-950 flex items-center justify-center text-xs font-extrabold hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-[#0B0F19] transition-all shadow-md shadow-cyan-500/10"
+          title={userName}
+        >
+          {userInitial}
         </button>
 
-        {/* Theme Toggle */}
-        <button className="w-8 h-8 rounded-md border border-zinc-200 flex items-center justify-center text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50 transition-colors">
-          <Sun className="w-4 h-4" />
-        </button>
+        {dropdownOpen && (
+          <div className="absolute right-0 mt-2 w-56 bg-[#0D1322] border border-slate-800 rounded-xl shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
+            <div className="px-4 py-2 border-b border-slate-800/80">
+              <p className="text-xs font-bold text-slate-100 truncate">{userName}</p>
+              <p className="text-[11px] text-slate-400 truncate mt-0.5">{userEmail}</p>
+            </div>
 
-        {/* Avatar Stack */}
-        <div className="flex items-center -space-x-2">
-          <div className="w-7 h-7 rounded-full border-2 border-white bg-zinc-900 text-white text-[10px] font-bold flex items-center justify-center">
-            A
+            <div className="py-1">
+              <Link
+                href="/admin/logout"
+                onClick={() => setDropdownOpen(false)}
+                className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Cerrar Sesión</span>
+              </Link>
+            </div>
           </div>
-          <div className="w-7 h-7 rounded-full border-2 border-white bg-zinc-700 text-white text-[10px] font-bold flex items-center justify-center">
-            B
-          </div>
-          <div className="w-7 h-7 rounded-full border-2 border-white bg-zinc-500 text-white text-[10px] font-bold flex items-center justify-center">
-            C
-          </div>
-        </div>
-
-        {/* Invite Pill Button */}
-        <button className="flex items-center gap-1.5 px-3 py-1.5 border border-zinc-200 rounded-md text-xs font-medium text-zinc-900 hover:bg-zinc-50 transition-colors shadow-2xs">
-          <UserPlus className="w-3.5 h-3.5 text-zinc-600" />
-          <span>Invitar</span>
-        </button>
-
+        )}
       </div>
 
     </header>

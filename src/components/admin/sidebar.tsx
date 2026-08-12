@@ -48,9 +48,9 @@ export function AdminSidebar({ currentUser, isOpen = true }: AdminSidebarProps) 
 
   return (
     <aside
-      className={`h-screen sticky top-0 select-none bg-zinc-50/50 flex flex-col transition-all duration-300 ease-in-out overflow-hidden ${
+      className={`h-screen sticky top-0 select-none bg-[#0B0F19] flex flex-col transition-all duration-300 ease-in-out overflow-hidden ${
         isOpen
-          ? 'w-64 opacity-100 border-r border-zinc-200'
+          ? 'w-64 opacity-100 border-r border-slate-800'
           : 'w-0 opacity-0 border-r-0 border-transparent pointer-events-none'
       }`}
     >
@@ -58,14 +58,14 @@ export function AdminSidebar({ currentUser, isOpen = true }: AdminSidebarProps) 
       
       {/* Top Workspace Header */}
       <div className="p-3">
-        <div className="w-full flex items-center justify-between p-2 rounded-lg bg-white border border-zinc-200 shadow-2xs">
+        <div className="w-full flex items-center justify-between p-2.5 rounded-lg bg-[#0D1322] border border-slate-800 shadow-sm">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-md bg-zinc-900 text-white flex items-center justify-center font-bold text-sm">
+            <div className="w-8 h-8 rounded-md bg-gradient-to-tr from-cyan-500 to-blue-600 text-slate-950 flex items-center justify-center font-black text-sm shadow-sm shadow-cyan-500/20">
               K
             </div>
             <div className="flex flex-col text-left">
-              <span className="text-xs font-bold text-zinc-900 leading-tight">Krylosys</span>
-              <span className="text-[11px] text-zinc-500 font-medium">Panel Admin</span>
+              <span className="text-xs font-bold text-slate-100 leading-tight">Krylosys</span>
+              <span className="text-[11px] text-cyan-400 font-medium">Panel Admin</span>
             </div>
           </div>
         </div>
@@ -76,7 +76,7 @@ export function AdminSidebar({ currentUser, isOpen = true }: AdminSidebarProps) 
         
         {/* Main Section */}
         <div className="space-y-1">
-          <div className="px-3 text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
+          <div className="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
             Colecciones
           </div>
           {mainNav.map((item) => {
@@ -88,11 +88,11 @@ export function AdminSidebar({ currentUser, isOpen = true }: AdminSidebarProps) 
                 href={item.href}
                 className={`flex items-center gap-3 px-3 py-2 rounded-md text-xs font-medium transition-all ${
                   isActive
-                    ? 'bg-zinc-200/70 text-zinc-900 font-semibold'
-                    : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900'
+                    ? 'bg-cyan-500/10 text-cyan-400 font-bold border-l-2 border-cyan-500 pl-2.5'
+                    : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-zinc-900' : 'text-zinc-500'}`} />
+                <Icon className={`w-4 h-4 ${isActive ? 'text-cyan-400' : 'text-slate-400'}`} />
                 <span>{item.name}</span>
               </Link>
             )
@@ -101,7 +101,7 @@ export function AdminSidebar({ currentUser, isOpen = true }: AdminSidebarProps) 
 
         {/* Globals Section */}
         <div className="space-y-1">
-          <div className="px-3 text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
+          <div className="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
             Secciones del Sitio
           </div>
           {globalNav.map((item) => {
@@ -113,11 +113,11 @@ export function AdminSidebar({ currentUser, isOpen = true }: AdminSidebarProps) 
                 href={item.href}
                 className={`flex items-center gap-3 px-3 py-2 rounded-md text-xs font-medium transition-all ${
                   isActive
-                    ? 'bg-zinc-200/70 text-zinc-900 font-semibold'
-                    : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900'
+                    ? 'bg-cyan-500/10 text-cyan-400 font-bold border-l-2 border-cyan-500 pl-2.5'
+                    : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-zinc-900' : 'text-zinc-500'}`} />
+                <Icon className={`w-4 h-4 ${isActive ? 'text-cyan-400' : 'text-slate-400'}`} />
                 <span>{item.name}</span>
               </Link>
             )
@@ -127,27 +127,27 @@ export function AdminSidebar({ currentUser, isOpen = true }: AdminSidebarProps) 
       </div>
 
       {/* Footer Profile Section */}
-      <div className="p-3 border-t border-zinc-200 space-y-2 bg-zinc-50">
+      <div className="p-3 border-t border-slate-800 space-y-2 bg-[#0B0F19]">
         
         <Link
           href="/"
           target="_blank"
-          className="flex items-center gap-2.5 px-3 py-2 rounded-md text-xs font-medium text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 transition-colors"
+          className="flex items-center gap-2.5 px-3 py-2 rounded-md text-xs font-medium text-slate-400 hover:bg-slate-800/60 hover:text-slate-100 transition-colors"
         >
-          <LifeBuoy className="w-4 h-4 text-zinc-500" />
+          <LifeBuoy className="w-4 h-4 text-cyan-400" />
           <span>Ver Sitio Web</span>
         </Link>
 
-        <div className="w-full flex items-center justify-between p-2 rounded-lg bg-white border border-zinc-200 shadow-2xs">
+        <div className="w-full flex items-center justify-between p-2 rounded-lg bg-[#0D1322] border border-slate-800">
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-full bg-zinc-900 text-white flex items-center justify-center text-xs font-bold">
+            <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 text-slate-950 flex items-center justify-center text-xs font-bold shadow-sm">
               {userInitial}
             </div>
             <div className="flex flex-col text-left overflow-hidden">
-              <span className="text-xs font-bold text-zinc-900 leading-tight truncate max-w-[130px]" title={userName}>
+              <span className="text-xs font-bold text-slate-100 leading-tight truncate max-w-[130px]" title={userName}>
                 {userName}
               </span>
-              <span className="text-[11px] text-zinc-500 truncate max-w-[130px]" title={userEmail}>
+              <span className="text-[11px] text-slate-400 truncate max-w-[130px]" title={userEmail}>
                 {userEmail}
               </span>
             </div>

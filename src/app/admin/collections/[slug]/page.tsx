@@ -11,8 +11,10 @@ import {
   Edit,
   X,
   ChevronDown,
-  Loader2
+  Loader2,
+  AlertTriangle
 } from 'lucide-react'
+import { sileo } from 'sileo'
 import {
   getCollectionItems,
   createCollectionItem,
@@ -213,18 +215,38 @@ export default function CollectionListPage() {
     setIsModalOpen(true)
   }
 
-  const handleDelete = async (id: string | number, email?: string) => {
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | number | null>(null)
+  const [deleting, setDeleting] = useState(false)
+
+  const handleDelete = (id: string | number, email?: string) => {
     if (slug === 'users' && currentUser?.email && email === currentUser.email) {
-      alert('No podés eliminar tu propia cuenta de usuario.')
+      sileo.warning({
+        title: 'Acción Bloqueada',
+        description: 'No podés eliminar tu propia cuenta de usuario.',
+      })
       return
     }
-    if (confirm('¿Estás seguro de eliminar este registro?')) {
-      const res = await deleteCollectionItem(slug, id)
-      if (res && !res.success && res.error) {
-        alert(res.error)
-      } else {
-        await loadData()
-      }
+    setDeleteConfirmId(id)
+  }
+
+  const executeDelete = async () => {
+    if (deleteConfirmId === null) return
+    setDeleting(true)
+    const res = await deleteCollectionItem(slug, deleteConfirmId)
+    setDeleting(false)
+    setDeleteConfirmId(null)
+
+    if (res && res.success) {
+      sileo.success({
+        title: 'Registro Eliminado',
+        description: 'El elemento se eliminó correctamente.',
+      })
+      await loadData()
+    } else {
+      sileo.error({
+        title: 'Error al Eliminar',
+        description: res?.error || 'No se pudo eliminar el registro.',
+      })
     }
   }
 
@@ -249,9 +271,31 @@ export default function CollectionListPage() {
     }
 
     if (editingItem && editingItem.id !== undefined) {
-      await updateCollectionItem(slug, editingItem.id, payload)
+      const res = await updateCollectionItem(slug, editingItem.id, payload)
+      if (res.success) {
+        sileo.success({
+          title: 'Registro Actualizado',
+          description: 'Los cambios fueron guardados exitosamente.',
+        })
+      } else {
+        sileo.error({
+          title: 'Error al Guardar',
+          description: res.error || 'No se pudo actualizar el registro.',
+        })
+      }
     } else {
-      await createCollectionItem(slug, payload)
+      const res = await createCollectionItem(slug, payload)
+      if (res.success) {
+        sileo.success({
+          title: 'Registro Creado',
+          description: 'El elemento fue creado exitosamente.',
+        })
+      } else {
+        sileo.error({
+          title: 'Error al Crear',
+          description: res.error || 'No se pudo crear el registro.',
+        })
+      }
     }
     setSubmitting(false)
     setIsModalOpen(false)
@@ -826,6 +870,45 @@ export default function CollectionListPage() {
               </div>
             </form>
 
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmId !== null && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-[#0D1322] border border-slate-800 rounded-xl max-w-md w-full p-6 shadow-2xl space-y-4 text-slate-100 animate-in fade-in duration-150">
+            <div className="flex items-center gap-3 text-amber-400">
+              <div className="w-10 h-10 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center flex-shrink-0">
+                <AlertTriangle className="w-5 h-5 text-amber-400" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-slate-100">¿Confirmar Eliminación?</h3>
+                <p className="text-xs text-slate-400 mt-0.5">Esta acción no se puede deshacer.</p>
+              </div>
+            </div>
+            <p className="text-xs text-slate-300 bg-[#060913] p-3 rounded-lg border border-slate-800/80">
+              ¿Estás seguro de que deseas eliminar este registro de <strong className="text-slate-100">{getCollectionTitle(slug)}</strong>?
+            </p>
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <button
+                type="button"
+                disabled={deleting}
+                onClick={() => setDeleteConfirmId(null)}
+                className="px-4 py-2 border border-slate-800 bg-slate-900 rounded-md text-xs font-medium text-slate-300 hover:bg-slate-800 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                disabled={deleting}
+                onClick={executeDelete}
+                className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-md text-xs font-bold shadow-md transition-colors inline-flex items-center gap-1.5"
+              >
+                {deleting && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                <span>Eliminar Registro</span>
+              </button>
+            </div>
           </div>
         </div>
       )}

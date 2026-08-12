@@ -5,6 +5,9 @@ import { AdminSidebar } from './sidebar'
 import { AdminHeader } from './header'
 import { getCurrentUser } from '@/app/admin/actions'
 
+import { Toaster } from 'sileo'
+import 'sileo/styles.css'
+
 import { AuthProvider } from './auth-provider'
 
 export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
@@ -17,6 +20,14 @@ export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthProvider>
+      <Toaster
+        position="top-center"
+        theme="dark"
+        options={{
+          fill: '#0D1322',
+          roundness: 12,
+        }}
+      />
       <div className="min-h-screen bg-[#060913] flex font-sans antialiased text-slate-100 selection:bg-cyan-500 selection:text-slate-950">
         {/* Custom Left Sidebar */}
         <AdminSidebar currentUser={currentUser} isOpen={sidebarOpen} />

@@ -11,6 +11,7 @@
     "generate:importmap": "payload generate:importmap"
   },
   "dependencies": {
+    "@payloadcms/db-postgres": "^3.87.1",
     "@payloadcms/db-sqlite": "^3.87.1",
     "@payloadcms/next": "^3.87.1",
     "@payloadcms/richtext-lexical": "^3.87.1",
@@ -25,6 +26,7 @@
     "payload": "^3.87.1",
     "react": "19.2.8",
     "react-dom": "19.2.8",
+    "sileo": "^0.1.5",
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {

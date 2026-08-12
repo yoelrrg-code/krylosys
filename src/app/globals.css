@@ -103,4 +103,28 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
+/* Sileo Toaster Corporate Dark Theme */
+:root {
+  --sileo-state-success: #00C8FF;
+  --sileo-state-loading: #0077FF;
+  --sileo-state-error: #EF4444;
+  --sileo-state-warning: #F59E0B;
+  --sileo-state-info: #3B82F6;
+  --sileo-state-action: #00C8FF;
+}
+
+[data-sileo-toast] {
+  font-family: inherit !important;
+  filter: drop-shadow(0 10px 25px rgba(0, 200, 255, 0.35)) drop-shadow(0 2px 10px rgba(0, 119, 255, 0.25)) !important;
+}
+
+[data-sileo-viewport][data-theme="dark"] [data-sileo-title] {
+  color: #F8FAFC !important;
+  font-weight: 700 !important;
+}
+
+[data-sileo-viewport][data-theme="dark"] [data-sileo-description] {
+  color: #94A3B8 !important;
+}
+
 

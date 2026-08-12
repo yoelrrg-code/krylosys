@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { Save, Check, Loader2, ArrowLeft } from 'lucide-react'
 import { getGlobalData, updateGlobalData } from '../../actions'
+import { sileo } from 'sileo'
 
 const GLOBAL_TITLES: Record<string, string> = {
   'hero-section': 'Sección Principal (Hero)',
@@ -98,13 +99,20 @@ export default function GlobalEditPage() {
     delete cleanData.id
     delete cleanData.createdAt
     delete cleanData.updatedAt
-    delete cleanData.globalType
-
     const res = await updateGlobalData(slug, cleanData)
     setSaving(false)
     if (res.success) {
       setSavedSuccess(true)
+      sileo.success({
+        title: 'Sección Global Guardada',
+        description: 'La configuración de la sección se actualizó con éxito.',
+      })
       setTimeout(() => setSavedSuccess(false), 3000)
+    } else {
+      sileo.error({
+        title: 'Error al Guardar',
+        description: res.error || 'Ocurrió un error al actualizar la sección.',
+      })
     }
   }
 

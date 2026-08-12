@@ -19,6 +19,7 @@ import {
   updateCollectionItem,
   deleteCollectionItem
 } from '../../actions'
+import { useAuth } from '@/components/admin/auth-provider'
 
 interface CollectionItem {
   id?: string | number
@@ -85,14 +86,55 @@ function getFieldLabel(key: string): string {
 export default function CollectionListPage() {
   const params = useParams()
   const slug = (params.slug as string) || 'users'
+  const { user: currentUser } = useAuth()
 
   const [items, setItems] = useState<CollectionItem[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
+  const [filterValue, setFilterValue] = useState<string>('all')
+  const [columnsOpen, setColumnsOpen] = useState(false)
+  const [filtersOpen, setFiltersOpen] = useState(false)
+  const columnsRef = React.useRef<HTMLDivElement>(null)
+  const filtersRef = React.useRef<HTMLDivElement>(null)
+
+  const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
+    id: true,
+    email: true,
+    name: true,
+    role: true,
+    title: true,
+    badge: true,
+    score: true,
+    highlight: true,
+    category: true,
+    metrics: true,
+    question: true,
+    order: true,
+    updatedAt: true,
+    actions: true,
+  })
+
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingItem, setEditingItem] = useState<CollectionItem | null>(null)
   const [formData, setFormData] = useState<Record<string, unknown>>({})
   const [submitting, setSubmitting] = useState(false)
+
+  const toggleColumn = (key: string) => {
+    setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }))
+  }
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (columnsRef.current && !columnsRef.current.contains(event.target as Node)) {
+        setColumnsOpen(false)
+      }
+      if (filtersRef.current && !filtersRef.current.contains(event.target as Node)) {
+        setFiltersOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   const loadData = useCallback(async () => {
     setLoading(true)
@@ -119,8 +161,21 @@ export default function CollectionListPage() {
   }, [slug])
 
   const filteredItems = items.filter((item) => {
-    const text = JSON.stringify(item).toLowerCase()
-    return text.includes(searchTerm.toLowerCase())
+    const matchesSearch = JSON.stringify(item).toLowerCase().includes(searchTerm.toLowerCase())
+    if (!matchesSearch) return false
+
+    if (filterValue === 'all') return true
+
+    if (slug === 'users') {
+      return (item.role || 'admin') === filterValue
+    } else if (slug === 'services') {
+      if (filterValue === 'highlighted') return Boolean(item.highlight)
+      if (filterValue === 'standard') return !item.highlight
+    } else if (slug === 'projects') {
+      return String(item.category || '') === filterValue
+    }
+
+    return true
   })
 
   const handleOpenCreate = () => {
@@ -158,10 +213,18 @@ export default function CollectionListPage() {
     setIsModalOpen(true)
   }
 
-  const handleDelete = async (id: string | number) => {
+  const handleDelete = async (id: string | number, email?: string) => {
+    if (slug === 'users' && currentUser?.email && email === currentUser.email) {
+      alert('No podés eliminar tu propia cuenta de usuario.')
+      return
+    }
     if (confirm('¿Estás seguro de eliminar este registro?')) {
-      await deleteCollectionItem(slug, id)
-      await loadData()
+      const res = await deleteCollectionItem(slug, id)
+      if (res && !res.success && res.error) {
+        alert(res.error)
+      } else {
+        await loadData()
+      }
     }
   }
 
@@ -236,17 +299,264 @@ export default function CollectionListPage() {
         </div>
 
         <div className="flex items-center gap-2">
-          <button className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-md text-xs font-medium text-slate-300 transition-colors">
-            <Columns className="w-3.5 h-3.5 text-slate-400" />
-            <span>Columnas</span>
-            <ChevronDown className="w-3 h-3 text-slate-500" />
-          </button>
+          
+          {/* Columnas Dropdown */}
+          <div className="relative" ref={columnsRef}>
+            <button
+              onClick={() => {
+                setColumnsOpen((prev) => !prev)
+                setFiltersOpen(false)
+              }}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 border rounded-md text-xs font-medium transition-colors ${
+                columnsOpen
+                  ? 'bg-slate-800 border-cyan-500/50 text-cyan-400'
+                  : 'bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-300'
+              }`}
+            >
+              <Columns className="w-3.5 h-3.5 text-slate-400" />
+              <span>Columnas</span>
+              <ChevronDown className={`w-3 h-3 text-slate-500 transition-transform ${columnsOpen ? 'rotate-180 text-cyan-400' : ''}`} />
+            </button>
 
-          <button className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-md text-xs font-medium text-slate-300 transition-colors">
-            <Filter className="w-3.5 h-3.5 text-slate-400" />
-            <span>Filtros</span>
-            <ChevronDown className="w-3 h-3 text-slate-500" />
-          </button>
+            {columnsOpen && (
+              <div className="absolute right-0 mt-2 w-56 bg-[#0D1322] border border-slate-800 rounded-xl shadow-2xl p-3 z-40 space-y-2 animate-in fade-in duration-150 text-xs">
+                <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                  <span className="font-bold text-slate-200">Visibilidad de Columnas</span>
+                  <button
+                    onClick={() => {
+                      setVisibleColumns({
+                        id: true, email: true, name: true, role: true,
+                        title: true, badge: true, score: true, highlight: true,
+                        category: true, metrics: true, question: true, order: true,
+                        updatedAt: true, actions: true,
+                      })
+                    }}
+                    className="text-[10px] text-cyan-400 hover:underline"
+                  >
+                    Mostrar Todas
+                  </button>
+                </div>
+
+                <div className="space-y-1 max-h-56 overflow-y-auto pr-1">
+                  {slug === 'users' && (
+                    <>
+                      <label className="flex items-center gap-2 text-slate-300 hover:text-slate-100 cursor-pointer py-1">
+                        <input type="checkbox" checked={visibleColumns.id !== false} onChange={() => toggleColumn('id')} className="rounded border-slate-700 bg-[#060913] text-cyan-500" />
+                        <span># ID</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-slate-300 hover:text-slate-100 cursor-pointer py-1">
+                        <input type="checkbox" checked={visibleColumns.email !== false} onChange={() => toggleColumn('email')} className="rounded border-slate-700 bg-[#060913] text-cyan-500" />
+                        <span>Email</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-slate-300 hover:text-slate-100 cursor-pointer py-1">
+                        <input type="checkbox" checked={visibleColumns.name !== false} onChange={() => toggleColumn('name')} className="rounded border-slate-700 bg-[#060913] text-cyan-500" />
+                        <span>Nombre Completo</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-slate-300 hover:text-slate-100 cursor-pointer py-1">
+                        <input type="checkbox" checked={visibleColumns.role !== false} onChange={() => toggleColumn('role')} className="rounded border-slate-700 bg-[#060913] text-cyan-500" />
+                        <span>Rol</span>
+                      </label>
+                    </>
+                  )}
+
+                  {slug === 'services' && (
+                    <>
+                      <label className="flex items-center gap-2 text-slate-300 hover:text-slate-100 cursor-pointer py-1">
+                        <input type="checkbox" checked={visibleColumns.id !== false} onChange={() => toggleColumn('id')} className="rounded border-slate-700 bg-[#060913] text-cyan-500" />
+                        <span># ID</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-slate-300 hover:text-slate-100 cursor-pointer py-1">
+                        <input type="checkbox" checked={visibleColumns.title !== false} onChange={() => toggleColumn('title')} className="rounded border-slate-700 bg-[#060913] text-cyan-500" />
+                        <span>Título</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-slate-300 hover:text-slate-100 cursor-pointer py-1">
+                        <input type="checkbox" checked={visibleColumns.badge !== false} onChange={() => toggleColumn('badge')} className="rounded border-slate-700 bg-[#060913] text-cyan-500" />
+                        <span>Insignia (Badge)</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-slate-300 hover:text-slate-100 cursor-pointer py-1">
+                        <input type="checkbox" checked={visibleColumns.score !== false} onChange={() => toggleColumn('score')} className="rounded border-slate-700 bg-[#060913] text-cyan-500" />
+                        <span>Métrica / Score</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-slate-300 hover:text-slate-100 cursor-pointer py-1">
+                        <input type="checkbox" checked={visibleColumns.highlight !== false} onChange={() => toggleColumn('highlight')} className="rounded border-slate-700 bg-[#060913] text-cyan-500" />
+                        <span>Portada</span>
+                      </label>
+                    </>
+                  )}
+
+                  {slug === 'projects' && (
+                    <>
+                      <label className="flex items-center gap-2 text-slate-300 hover:text-slate-100 cursor-pointer py-1">
+                        <input type="checkbox" checked={visibleColumns.id !== false} onChange={() => toggleColumn('id')} className="rounded border-slate-700 bg-[#060913] text-cyan-500" />
+                        <span># ID</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-slate-300 hover:text-slate-100 cursor-pointer py-1">
+                        <input type="checkbox" checked={visibleColumns.title !== false} onChange={() => toggleColumn('title')} className="rounded border-slate-700 bg-[#060913] text-cyan-500" />
+                        <span>Título</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-slate-300 hover:text-slate-100 cursor-pointer py-1">
+                        <input type="checkbox" checked={visibleColumns.category !== false} onChange={() => toggleColumn('category')} className="rounded border-slate-700 bg-[#060913] text-cyan-500" />
+                        <span>Categoría</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-slate-300 hover:text-slate-100 cursor-pointer py-1">
+                        <input type="checkbox" checked={visibleColumns.metrics !== false} onChange={() => toggleColumn('metrics')} className="rounded border-slate-700 bg-[#060913] text-cyan-500" />
+                        <span>Métrica</span>
+                      </label>
+                    </>
+                  )}
+
+                  {slug === 'faqs' && (
+                    <>
+                      <label className="flex items-center gap-2 text-slate-300 hover:text-slate-100 cursor-pointer py-1">
+                        <input type="checkbox" checked={visibleColumns.id !== false} onChange={() => toggleColumn('id')} className="rounded border-slate-700 bg-[#060913] text-cyan-500" />
+                        <span># ID</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-slate-300 hover:text-slate-100 cursor-pointer py-1">
+                        <input type="checkbox" checked={visibleColumns.question !== false} onChange={() => toggleColumn('question')} className="rounded border-slate-700 bg-[#060913] text-cyan-500" />
+                        <span>Pregunta</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-slate-300 hover:text-slate-100 cursor-pointer py-1">
+                        <input type="checkbox" checked={visibleColumns.order !== false} onChange={() => toggleColumn('order')} className="rounded border-slate-700 bg-[#060913] text-cyan-500" />
+                        <span>Orden</span>
+                      </label>
+                    </>
+                  )}
+
+                  <label className="flex items-center gap-2 text-slate-300 hover:text-slate-100 cursor-pointer py-1 border-t border-slate-800/60 pt-1.5 mt-1">
+                    <input type="checkbox" checked={visibleColumns.updatedAt !== false} onChange={() => toggleColumn('updatedAt')} className="rounded border-slate-700 bg-[#060913] text-cyan-500" />
+                    <span>Actualizado</span>
+                  </label>
+                  <label className="flex items-center gap-2 text-slate-300 hover:text-slate-100 cursor-pointer py-1">
+                    <input type="checkbox" checked={visibleColumns.actions !== false} onChange={() => toggleColumn('actions')} className="rounded border-slate-700 bg-[#060913] text-cyan-500" />
+                    <span>Acciones</span>
+                  </label>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Filtros Dropdown */}
+          <div className="relative" ref={filtersRef}>
+            <button
+              onClick={() => {
+                setFiltersOpen((prev) => !prev)
+                setColumnsOpen(false)
+              }}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 border rounded-md text-xs font-medium transition-colors ${
+                filterValue !== 'all' || filtersOpen
+                  ? 'bg-cyan-500/10 border-cyan-500/50 text-cyan-400'
+                  : 'bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-300'
+              }`}
+            >
+              <Filter className="w-3.5 h-3.5 text-slate-400" />
+              <span>{filterValue !== 'all' ? `Filtro Activo` : 'Filtros'}</span>
+              <ChevronDown className={`w-3 h-3 text-slate-500 transition-transform ${filtersOpen ? 'rotate-180 text-cyan-400' : ''}`} />
+            </button>
+
+            {filtersOpen && (
+              <div className="absolute right-0 mt-2 w-56 bg-[#0D1322] border border-slate-800 rounded-xl shadow-2xl p-3 z-40 space-y-2 animate-in fade-in duration-150 text-xs">
+                <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                  <span className="font-bold text-slate-200">Filtrar por Criterio</span>
+                  {filterValue !== 'all' && (
+                    <button
+                      onClick={() => setFilterValue('all')}
+                      className="text-[10px] text-cyan-400 hover:underline"
+                    >
+                      Limpiar
+                    </button>
+                  )}
+                </div>
+
+                <div className="space-y-1">
+                  {slug === 'users' && (
+                    <>
+                      <button
+                        onClick={() => { setFilterValue('all'); setFiltersOpen(false) }}
+                        className={`w-full text-left px-2.5 py-1.5 rounded-md ${filterValue === 'all' ? 'bg-cyan-500/10 text-cyan-400 font-bold' : 'text-slate-300 hover:bg-slate-800'}`}
+                      >
+                        Todos los Roles
+                      </button>
+                      <button
+                        onClick={() => { setFilterValue('admin'); setFiltersOpen(false) }}
+                        className={`w-full text-left px-2.5 py-1.5 rounded-md ${filterValue === 'admin' ? 'bg-cyan-500/10 text-cyan-400 font-bold' : 'text-slate-300 hover:bg-slate-800'}`}
+                      >
+                        Administradores (admin)
+                      </button>
+                      <button
+                        onClick={() => { setFilterValue('editor'); setFiltersOpen(false) }}
+                        className={`w-full text-left px-2.5 py-1.5 rounded-md ${filterValue === 'editor' ? 'bg-cyan-500/10 text-cyan-400 font-bold' : 'text-slate-300 hover:bg-slate-800'}`}
+                      >
+                        Editores (editor)
+                      </button>
+                    </>
+                  )}
+
+                  {slug === 'services' && (
+                    <>
+                      <button
+                        onClick={() => { setFilterValue('all'); setFiltersOpen(false) }}
+                        className={`w-full text-left px-2.5 py-1.5 rounded-md ${filterValue === 'all' ? 'bg-cyan-500/10 text-cyan-400 font-bold' : 'text-slate-300 hover:bg-slate-800'}`}
+                      >
+                        Todos los Servicios
+                      </button>
+                      <button
+                        onClick={() => { setFilterValue('highlighted'); setFiltersOpen(false) }}
+                        className={`w-full text-left px-2.5 py-1.5 rounded-md ${filterValue === 'highlighted' ? 'bg-cyan-500/10 text-cyan-400 font-bold' : 'text-slate-300 hover:bg-slate-800'}`}
+                      >
+                        Solo Destacados
+                      </button>
+                      <button
+                        onClick={() => { setFilterValue('standard'); setFiltersOpen(false) }}
+                        className={`w-full text-left px-2.5 py-1.5 rounded-md ${filterValue === 'standard' ? 'bg-cyan-500/10 text-cyan-400 font-bold' : 'text-slate-300 hover:bg-slate-800'}`}
+                      >
+                        Solo Estándar
+                      </button>
+                    </>
+                  )}
+
+                  {slug === 'projects' && (
+                    <>
+                      <button
+                        onClick={() => { setFilterValue('all'); setFiltersOpen(false) }}
+                        className={`w-full text-left px-2.5 py-1.5 rounded-md ${filterValue === 'all' ? 'bg-cyan-500/10 text-cyan-400 font-bold' : 'text-slate-300 hover:bg-slate-800'}`}
+                      >
+                        Todas las Categorías
+                      </button>
+                      <button
+                        onClick={() => { setFilterValue('nextjs'); setFiltersOpen(false) }}
+                        className={`w-full text-left px-2.5 py-1.5 rounded-md ${filterValue === 'nextjs' ? 'bg-cyan-500/10 text-cyan-400 font-bold' : 'text-slate-300 hover:bg-slate-800'}`}
+                      >
+                        Next.js & React
+                      </button>
+                      <button
+                        onClick={() => { setFilterValue('wordpress'); setFiltersOpen(false) }}
+                        className={`w-full text-left px-2.5 py-1.5 rounded-md ${filterValue === 'wordpress' ? 'bg-cyan-500/10 text-cyan-400 font-bold' : 'text-slate-300 hover:bg-slate-800'}`}
+                      >
+                        WordPress
+                      </button>
+                      <button
+                        onClick={() => { setFilterValue('woocommerce'); setFiltersOpen(false) }}
+                        className={`w-full text-left px-2.5 py-1.5 rounded-md ${filterValue === 'woocommerce' ? 'bg-cyan-500/10 text-cyan-400 font-bold' : 'text-slate-300 hover:bg-slate-800'}`}
+                      >
+                        WooCommerce
+                      </button>
+                      <button
+                        onClick={() => { setFilterValue('custom'); setFiltersOpen(false) }}
+                        className={`w-full text-left px-2.5 py-1.5 rounded-md ${filterValue === 'custom' ? 'bg-cyan-500/10 text-cyan-400 font-bold' : 'text-slate-300 hover:bg-slate-800'}`}
+                      >
+                        Software a Medida
+                      </button>
+                    </>
+                  )}
+
+                  {slug === 'faqs' && (
+                    <p className="text-slate-400 text-[11px] p-2">Todos los registros activos.</p>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
         </div>
 
       </div>
@@ -260,121 +570,139 @@ export default function CollectionListPage() {
           </div>
         ) : filteredItems.length === 0 ? (
           <div className="p-12 text-center text-slate-400 text-xs">
-            No se encontraron registros en esta colección.
+            No se encontraron registros que coincidan con la búsqueda o filtro aplicado.
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead className="bg-[#0B0F19] border-b border-slate-800 text-slate-400 font-semibold uppercase tracking-wider text-[11px]">
                 <tr>
-                  <th className="p-3.5 pl-5"># ID</th>
+                  {visibleColumns.id !== false && <th className="p-3.5 pl-5"># ID</th>}
                   {slug === 'users' && (
                     <>
-                      <th className="p-3.5">Email</th>
-                      <th className="p-3.5">Nombre Completo</th>
-                      <th className="p-3.5">Rol</th>
+                      {visibleColumns.email !== false && <th className="p-3.5">Email</th>}
+                      {visibleColumns.name !== false && <th className="p-3.5">Nombre Completo</th>}
+                      {visibleColumns.role !== false && <th className="p-3.5">Rol</th>}
                     </>
                   )}
                   {slug === 'services' && (
                     <>
-                      <th className="p-3.5">Título</th>
-                      <th className="p-3.5">Insignia (Badge)</th>
-                      <th className="p-3.5">Métrica / Score</th>
-                      <th className="p-3.5">Portada</th>
+                      {visibleColumns.title !== false && <th className="p-3.5">Título</th>}
+                      {visibleColumns.badge !== false && <th className="p-3.5">Insignia (Badge)</th>}
+                      {visibleColumns.score !== false && <th className="p-3.5">Métrica / Score</th>}
+                      {visibleColumns.highlight !== false && <th className="p-3.5">Portada</th>}
                     </>
                   )}
                   {slug === 'projects' && (
                     <>
-                      <th className="p-3.5">Título</th>
-                      <th className="p-3.5">Categoría</th>
-                      <th className="p-3.5">Métrica</th>
+                      {visibleColumns.title !== false && <th className="p-3.5">Título</th>}
+                      {visibleColumns.category !== false && <th className="p-3.5">Categoría</th>}
+                      {visibleColumns.metrics !== false && <th className="p-3.5">Métrica</th>}
                     </>
                   )}
                   {slug === 'faqs' && (
                     <>
-                      <th className="p-3.5">Pregunta</th>
-                      <th className="p-3.5">Orden</th>
+                      {visibleColumns.question !== false && <th className="p-3.5">Pregunta</th>}
+                      {visibleColumns.order !== false && <th className="p-3.5">Orden</th>}
                     </>
                   )}
-                  <th className="p-3.5">Actualizado</th>
-                  <th className="p-3.5 text-right pr-5">Acciones</th>
+                  {visibleColumns.updatedAt !== false && <th className="p-3.5">Actualizado</th>}
+                  {visibleColumns.actions !== false && <th className="p-3.5 text-right pr-5">Acciones</th>}
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/60 text-slate-200">
-                {filteredItems.map((item) => (
-                  <tr key={item.id} className="hover:bg-slate-800/40 transition-colors">
-                    <td className="p-3.5 pl-5 font-mono text-slate-500 text-[11px]">{item.id}</td>
-                    
-                    {slug === 'users' && (
-                      <>
-                        <td className="p-3.5 font-medium text-slate-100">{item.email}</td>
-                        <td className="p-3.5 text-slate-300">{item.name || item.fullName || 'Yoelkys - Admin Krylosys'}</td>
-                        <td className="p-3.5">
-                          <span className="inline-flex px-2 py-0.5 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-[10px] font-bold uppercase">
-                            {item.role || 'Administrador'}
-                          </span>
+                {filteredItems.map((item) => {
+                  const isSelf = slug === 'users' && Boolean(currentUser?.email && item.email === currentUser.email)
+                  return (
+                    <tr key={item.id} className="hover:bg-slate-800/40 transition-colors">
+                      {visibleColumns.id !== false && <td className="p-3.5 pl-5 font-mono text-slate-500 text-[11px]">{item.id}</td>}
+                      
+                      {slug === 'users' && (
+                        <>
+                          {visibleColumns.email !== false && <td className="p-3.5 font-medium text-slate-100">{item.email}</td>}
+                          {visibleColumns.name !== false && <td className="p-3.5 text-slate-300">{item.name || item.fullName || 'Yoelkys - Admin Krylosys'}</td>}
+                          {visibleColumns.role !== false && (
+                            <td className="p-3.5">
+                              <span className="inline-flex px-2 py-0.5 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-[10px] font-bold uppercase">
+                                {item.role || 'Administrador'}
+                              </span>
+                            </td>
+                          )}
+                        </>
+                      )}
+
+                      {slug === 'services' && (
+                        <>
+                          {visibleColumns.title !== false && <td className="p-3.5 font-semibold text-slate-100">{String(item.title || '')}</td>}
+                          {visibleColumns.badge !== false && <td className="p-3.5 text-slate-300 font-medium">{String(item.badge || '')}</td>}
+                          {visibleColumns.score !== false && <td className="p-3.5 text-slate-400">{String(item.score || '')}</td>}
+                          {visibleColumns.highlight !== false && (
+                            <td className="p-3.5">
+                              <span className={`inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                                item.highlight
+                                  ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20'
+                                  : 'bg-slate-800 text-slate-400'
+                              }`}>
+                                {item.highlight ? 'Destacado' : 'Estándar'}
+                              </span>
+                            </td>
+                          )}
+                        </>
+                      )}
+
+                      {slug === 'projects' && (
+                        <>
+                          {visibleColumns.title !== false && <td className="p-3.5 font-semibold text-slate-100">{String(item.title || '')}</td>}
+                          {visibleColumns.category !== false && (
+                            <td className="p-3.5">
+                              <span className="inline-flex px-2 py-0.5 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-[10px] font-bold uppercase">
+                                {String(item.category || '')}
+                              </span>
+                            </td>
+                          )}
+                          {visibleColumns.metrics !== false && <td className="p-3.5 text-slate-400">{String(item.metrics || '')}</td>}
+                        </>
+                      )}
+
+                      {slug === 'faqs' && (
+                        <>
+                          {visibleColumns.question !== false && <td className="p-3.5 font-semibold text-slate-100">{item.question}</td>}
+                          {visibleColumns.order !== false && <td className="p-3.5 font-medium text-slate-400">{item.order}</td>}
+                        </>
+                      )}
+
+                      {visibleColumns.updatedAt !== false && (
+                        <td className="p-3.5 text-slate-500 text-[11px]">
+                          {item.updatedAt ? new Date(item.updatedAt).toLocaleDateString() : 'Reciente'}
                         </td>
-                      </>
-                    )}
+                      )}
 
-                    {slug === 'services' && (
-                      <>
-                        <td className="p-3.5 font-semibold text-slate-100">{String(item.title || '')}</td>
-                        <td className="p-3.5 text-slate-300 font-medium">{String(item.badge || '')}</td>
-                        <td className="p-3.5 text-slate-400">{String(item.score || '')}</td>
-                        <td className="p-3.5">
-                          <span className={`inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold ${
-                            item.highlight
-                              ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20'
-                              : 'bg-slate-800 text-slate-400'
-                          }`}>
-                            {item.highlight ? 'Destacado' : 'Estándar'}
-                          </span>
+                      {visibleColumns.actions !== false && (
+                        <td className="p-3.5 text-right pr-5 space-x-2">
+                          <button
+                            onClick={() => handleOpenEdit(item)}
+                            className="p-1.5 rounded-md border border-slate-800 bg-slate-900 text-slate-300 hover:text-cyan-400 hover:border-cyan-500/40 hover:bg-slate-800 transition-colors"
+                            title="Editar"
+                          >
+                            <Edit className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            disabled={isSelf}
+                            onClick={() => !isSelf && item.id !== undefined && handleDelete(item.id, item.email)}
+                            className={`p-1.5 rounded-md border transition-colors ${
+                              isSelf
+                                ? 'border-slate-800/50 bg-slate-900/40 text-slate-600 cursor-not-allowed opacity-40'
+                                : 'border-slate-800 bg-slate-900 text-red-400 hover:bg-red-500/10 hover:border-red-500/30'
+                            }`}
+                            title={isSelf ? 'No podés eliminar tu propia cuenta' : 'Eliminar'}
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
                         </td>
-                      </>
-                    )}
-
-                    {slug === 'projects' && (
-                      <>
-                        <td className="p-3.5 font-semibold text-slate-100">{String(item.title || '')}</td>
-                        <td className="p-3.5">
-                          <span className="inline-flex px-2 py-0.5 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-[10px] font-bold uppercase">
-                            {String(item.category || '')}
-                          </span>
-                        </td>
-                        <td className="p-3.5 text-slate-400">{String(item.metrics || '')}</td>
-                      </>
-                    )}
-
-                    {slug === 'faqs' && (
-                      <>
-                        <td className="p-3.5 font-semibold text-slate-100">{item.question}</td>
-                        <td className="p-3.5 font-medium text-slate-400">{item.order}</td>
-                      </>
-                    )}
-
-                    <td className="p-3.5 text-slate-500 text-[11px]">
-                      {item.updatedAt ? new Date(item.updatedAt).toLocaleDateString() : 'Reciente'}
-                    </td>
-
-                    <td className="p-3.5 text-right pr-5 space-x-2">
-                      <button
-                        onClick={() => handleOpenEdit(item)}
-                        className="p-1.5 rounded-md border border-slate-800 bg-slate-900 text-slate-300 hover:text-cyan-400 hover:border-cyan-500/40 hover:bg-slate-800 transition-colors"
-                        title="Editar"
-                      >
-                        <Edit className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={() => item.id !== undefined && handleDelete(item.id)}
-                        className="p-1.5 rounded-md border border-slate-800 bg-slate-900 text-red-400 hover:bg-red-500/10 hover:border-red-500/30 transition-colors"
-                        title="Eliminar"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                      )}
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>

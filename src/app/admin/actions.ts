@@ -4,7 +4,7 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { revalidatePath } from 'next/cache'
 
-import { headers } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 
 export async function getCurrentUser() {
   try {
@@ -18,22 +18,51 @@ export async function getCurrentUser() {
         role: (user.role as string) || 'admin',
       }
     }
-    const users = await payload.find({ collection: 'users', limit: 1 })
-    if (users.docs.length > 0) {
-      const first = users.docs[0]
-      return {
-        email: (first.email as string) || 'yoelkys.rrg@gmail.com',
-        name: (first.name as string) || 'Yoelkys R Rodriguez Gonzalez',
-        role: (first.role as string) || 'admin',
-      }
-    }
   } catch (error) {
     console.error('Error fetching current user:', error)
   }
-  return {
-    email: 'yoelkys.rrg@gmail.com',
-    name: 'Yoelkys R Rodriguez Gonzalez',
-    role: 'admin',
+  return null
+}
+
+export async function loginUser(email: string, pass: string) {
+  try {
+    const payload = await getPayload({ config })
+    const res = await payload.login({
+      collection: 'users',
+      data: { email, password: pass },
+    })
+
+    if (res.token && res.user) {
+      const cookieStore = await cookies()
+      cookieStore.set('payload-token', res.token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        path: '/',
+        sameSite: 'lax',
+      })
+      return {
+        success: true,
+        user: {
+          email: res.user.email,
+          name: (res.user.name as string) || res.user.email,
+          role: (res.user.role as string) || 'admin',
+        },
+      }
+    }
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : 'Credenciales inválidas'
+    return { success: false, error: msg }
+  }
+  return { success: false, error: 'No se pudo iniciar sesión con esas credenciales' }
+}
+
+export async function logoutUser() {
+  try {
+    const cookieStore = await cookies()
+    cookieStore.delete('payload-token')
+    return { success: true }
+  } catch {
+    return { success: false }
   }
 }
 
@@ -115,6 +144,15 @@ export async function updateCollectionItem(slug: string, id: string | number, da
 export async function deleteCollectionItem(slug: string, id: string | number) {
   try {
     const payload = await getPayload({ config })
+
+    if (slug === 'users') {
+      const reqHeaders = await headers()
+      const { user } = await payload.auth({ headers: reqHeaders })
+      if (user && String(user.id) === String(id)) {
+        return { success: false, error: 'No podés eliminar tu propia cuenta de usuario' }
+      }
+    }
+
     await payload.delete({
       collection: slug as 'users' | 'projects' | 'services' | 'faqs',
       id,

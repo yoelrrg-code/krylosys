@@ -1,8 +1,9 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
-import Link from 'next/link'
 import { PanelLeft, LogOut } from 'lucide-react'
+
+import { useAuth } from './auth-provider'
 
 interface AdminHeaderProps {
   onToggleSidebar?: () => void
@@ -12,9 +13,11 @@ interface AdminHeaderProps {
 export function AdminHeader({ onToggleSidebar, currentUser }: AdminHeaderProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const { logout, user: authUser } = useAuth()
 
-  const userName = currentUser?.name || 'Yoelkys R Rodriguez Gonzalez'
-  const userEmail = currentUser?.email || 'yoelkys.rrg@gmail.com'
+  const activeUser = currentUser || authUser
+  const userName = activeUser?.name || 'Yoelkys R Rodriguez Gonzalez'
+  const userEmail = activeUser?.email || 'yoelkys.rrg@gmail.com'
   const userInitial = userName.charAt(0).toUpperCase() || 'Y'
 
   useEffect(() => {
@@ -59,14 +62,17 @@ export function AdminHeader({ onToggleSidebar, currentUser }: AdminHeaderProps) 
             </div>
 
             <div className="py-1">
-              <Link
-                href="/admin/logout"
-                onClick={() => setDropdownOpen(false)}
-                className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors"
+              <button
+                type="button"
+                onClick={async () => {
+                  setDropdownOpen(false)
+                  await logout()
+                }}
+                className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors text-left"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 <span>Cerrar Sesión</span>
-              </Link>
+              </button>
             </div>
           </div>
         )}

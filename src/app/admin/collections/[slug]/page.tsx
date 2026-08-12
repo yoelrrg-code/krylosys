@@ -764,8 +764,8 @@ export default function CollectionListPage() {
 
       {/* Create / Edit Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-[#0D1322] border border-slate-800 rounded-xl max-w-lg w-full p-6 shadow-2xl space-y-4 text-slate-100">
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+          <div className="bg-[#0D1322] border border-slate-800 rounded-t-2xl sm:rounded-xl max-w-lg w-full p-5 sm:p-6 shadow-2xl space-y-4 text-slate-100 max-h-[90dvh] overflow-y-auto">
             
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <h3 className="text-base font-bold text-slate-100">
@@ -876,8 +876,8 @@ export default function CollectionListPage() {
 
       {/* Delete Confirmation Modal */}
       {deleteConfirmId !== null && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-[#0D1322] border border-slate-800 rounded-xl max-w-md w-full p-6 shadow-2xl space-y-4 text-slate-100 animate-in fade-in duration-150">
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+          <div className="bg-[#0D1322] border border-slate-800 rounded-t-2xl sm:rounded-xl max-w-md w-full p-5 sm:p-6 shadow-2xl space-y-4 text-slate-100 animate-in fade-in duration-150">
             <div className="flex items-center gap-3 text-amber-400">
               <div className="w-10 h-10 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center flex-shrink-0">
                 <AlertTriangle className="w-5 h-5 text-amber-400" />

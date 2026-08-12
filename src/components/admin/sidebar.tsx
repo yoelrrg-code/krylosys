@@ -14,15 +14,17 @@ import {
   Sparkles,
   Info,
   Phone,
-  MessageSquareQuote
+  MessageSquareQuote,
+  X,
 } from 'lucide-react'
 
 interface AdminSidebarProps {
   currentUser?: { email?: string; name?: string; role?: string } | null
   isOpen?: boolean
+  onClose?: () => void
 }
 
-export function AdminSidebar({ currentUser, isOpen = true }: AdminSidebarProps) {
+export function AdminSidebar({ currentUser, isOpen = true, onClose }: AdminSidebarProps) {
   const pathname = usePathname()
 
   const userName = currentUser?.name || 'Yoelkys R Rodriguez Gonzalez'
@@ -46,19 +48,15 @@ export function AdminSidebar({ currentUser, isOpen = true }: AdminSidebarProps) 
     { name: 'Contacto & Redes', href: '/admin/globals/contact-info', icon: Phone },
   ]
 
-  return (
-    <aside
-      className={`h-screen sticky top-0 select-none bg-[#0B0F19] flex flex-col transition-all duration-300 ease-in-out overflow-hidden ${
-        isOpen
-          ? 'w-64 opacity-100 border-r border-slate-800'
-          : 'w-0 opacity-0 border-r-0 border-transparent pointer-events-none'
-      }`}
-    >
-      <div className="w-64 min-w-[16rem] flex flex-col h-full">
-      
+  const handleNavClick = () => {
+    onClose?.()
+  }
+
+  const sidebarContent = (
+    <div className="w-64 min-w-[16rem] flex flex-col h-full">
       {/* Top Workspace Header */}
-      <div className="p-3">
-        <div className="w-full flex items-center justify-between p-2.5 rounded-lg bg-[#0D1322] border border-slate-800 shadow-sm">
+      <div className="p-3 flex items-center justify-between gap-2">
+        <div className="flex-1 flex items-center justify-between p-2.5 rounded-lg bg-[#0D1322] border border-slate-800 shadow-sm">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-md bg-gradient-to-tr from-cyan-500 to-blue-600 text-slate-950 flex items-center justify-center font-black text-sm shadow-sm shadow-cyan-500/20">
               K
@@ -69,12 +67,22 @@ export function AdminSidebar({ currentUser, isOpen = true }: AdminSidebarProps) 
             </div>
           </div>
         </div>
+        {/* Close button — mobile only */}
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="lg:hidden ml-1 w-8 h-8 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-100 hover:bg-slate-800 transition-colors flex-shrink-0"
+            aria-label="Cerrar menú"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
       </div>
 
       {/* Navigation Items (Scrollable) */}
       <div className="flex-1 overflow-y-auto px-3 py-2 space-y-6">
-        
-        {/* Main Section */}
+
+        {/* Collections Section */}
         <div className="space-y-1">
           <div className="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
             Colecciones
@@ -86,13 +94,14 @@ export function AdminSidebar({ currentUser, isOpen = true }: AdminSidebarProps) 
               <Link
                 key={item.name}
                 href={item.href}
+                onClick={handleNavClick}
                 className={`flex items-center gap-3 px-3 py-2 rounded-md text-xs font-medium transition-all ${
                   isActive
                     ? 'bg-cyan-500/10 text-cyan-400 font-bold border-l-2 border-cyan-500 pl-2.5'
                     : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-cyan-400' : 'text-slate-400'}`} />
+                <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-cyan-400' : 'text-slate-400'}`} />
                 <span>{item.name}</span>
               </Link>
             )
@@ -111,13 +120,14 @@ export function AdminSidebar({ currentUser, isOpen = true }: AdminSidebarProps) 
               <Link
                 key={item.name}
                 href={item.href}
+                onClick={handleNavClick}
                 className={`flex items-center gap-3 px-3 py-2 rounded-md text-xs font-medium transition-all ${
                   isActive
                     ? 'bg-cyan-500/10 text-cyan-400 font-bold border-l-2 border-cyan-500 pl-2.5'
                     : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-cyan-400' : 'text-slate-400'}`} />
+                <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-cyan-400' : 'text-slate-400'}`} />
                 <span>{item.name}</span>
               </Link>
             )
@@ -128,22 +138,23 @@ export function AdminSidebar({ currentUser, isOpen = true }: AdminSidebarProps) 
 
       {/* Footer Profile Section */}
       <div className="p-3 border-t border-slate-800 space-y-2 bg-[#0B0F19]">
-        
+
         <Link
           href="/"
           target="_blank"
+          onClick={handleNavClick}
           className="flex items-center gap-2.5 px-3 py-2 rounded-md text-xs font-medium text-slate-400 hover:bg-slate-800/60 hover:text-slate-100 transition-colors"
         >
-          <LifeBuoy className="w-4 h-4 text-cyan-400" />
+          <LifeBuoy className="w-4 h-4 text-cyan-400 flex-shrink-0" />
           <span>Ver Sitio Web</span>
         </Link>
 
         <div className="w-full flex items-center justify-between p-2 rounded-lg bg-[#0D1322] border border-slate-800">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 text-slate-950 flex items-center justify-center text-xs font-bold shadow-sm">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 text-slate-950 flex items-center justify-center text-xs font-bold shadow-sm flex-shrink-0">
               {userInitial}
             </div>
-            <div className="flex flex-col text-left overflow-hidden">
+            <div className="flex flex-col text-left min-w-0">
               <span className="text-xs font-bold text-slate-100 leading-tight truncate max-w-[130px]" title={userName}>
                 {userName}
               </span>
@@ -155,9 +166,39 @@ export function AdminSidebar({ currentUser, isOpen = true }: AdminSidebarProps) 
         </div>
 
       </div>
+    </div>
+  )
 
-      </div>
+  return (
+    <>
+      {/* ── Desktop sidebar: always visible, fixed at left ─── */}
+      <aside
+        className={`hidden lg:flex h-screen sticky top-0 select-none bg-[#0B0F19] flex-col transition-all duration-300 ease-in-out overflow-hidden ${
+          isOpen
+            ? 'w-64 opacity-100 border-r border-slate-800'
+            : 'w-0 opacity-0 border-r-0 border-transparent pointer-events-none'
+        }`}
+      >
+        {sidebarContent}
+      </aside>
 
-    </aside>
+      {/* ── Mobile sidebar: drawer overlay ─────────────────── */}
+      {/* Backdrop */}
+      <div
+        className={`lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${
+          isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+        onClick={onClose}
+        aria-hidden="true"
+      />
+      {/* Drawer panel */}
+      <aside
+        className={`lg:hidden fixed inset-y-0 left-0 z-50 w-64 select-none bg-[#0B0F19] border-r border-slate-800 flex flex-col transition-transform duration-300 ease-in-out ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        {sidebarContent}
+      </aside>
+    </>
   )
 }

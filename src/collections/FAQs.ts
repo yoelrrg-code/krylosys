@@ -5,6 +5,9 @@ export const FAQs: CollectionConfig = {
   admin: {
     useAsTitle: 'question',
   },
+  access: {
+    read: () => true,
+  },
   fields: [
     {
       name: 'question',

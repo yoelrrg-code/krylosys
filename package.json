@@ -16,6 +16,8 @@
     "@payloadcms/next": "^3.87.1",
     "@payloadcms/richtext-lexical": "^3.87.1",
     "@types/aos": "^3.0.8",
+    "@upstash/ratelimit": "^2.0.8",
+    "@upstash/redis": "^1.38.2",
     "aos": "^2.3.4",
     "clsx": "^2.1.1",
     "framer-motion": "^13.1.0",

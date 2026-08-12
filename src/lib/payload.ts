@@ -73,7 +73,6 @@ export async function getServicesData() {
     const res = await payload.find({
       collection: 'services',
       limit: 100,
-      overrideAccess: true,
     })
     return res.docs
   } catch (error) {
@@ -88,7 +87,6 @@ export async function getProjectsData() {
     const res = await payload.find({
       collection: 'projects',
       limit: 100,
-      overrideAccess: true,
     })
     return res.docs
   } catch (error) {
@@ -104,7 +102,6 @@ export async function getFaqsData() {
       collection: 'faqs',
       sort: 'order',
       limit: 100,
-      overrideAccess: true,
     })
     return res.docs
   } catch (error) {

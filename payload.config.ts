@@ -44,13 +44,19 @@ export default buildConfig({
   collections: [Users, Services, Projects, FAQs],
   globals: [HeroSection, AboutSection, ServicesSection, ProjectsSection, FaqSection, ContactInfo],
   editor: lexicalEditor(),
-  secret: process.env.PAYLOAD_SECRET || 'krylosys-super-secret-key-2026-secure-token',
+  secret: (() => {
+    if (!process.env.PAYLOAD_SECRET) throw new Error('PAYLOAD_SECRET env variable is required')
+    return process.env.PAYLOAD_SECRET
+  })(),
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   db: postgresAdapter({
     pool: {
-      connectionString: process.env.DATABASE_URI || 'postgresql://neondb_owner:npg_vqZdNJ1fD8rE@ep-icy-tree-ayr60kls-pooler.c-5.us-east-2.aws.neon.tech/krylosys?sslmode=verify-full&channel_binding=require',
+      connectionString: (() => {
+        if (!process.env.DATABASE_URI) throw new Error('DATABASE_URI env variable is required')
+        return process.env.DATABASE_URI
+      })(),
     },
   }),
 })

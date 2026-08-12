@@ -3,8 +3,49 @@
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { revalidatePath } from 'next/cache'
-
 import { cookies, headers } from 'next/headers'
+import { checkLoginRateLimit } from '@/lib/rate-limit'
+
+// ─── Allowlists ───────────────────────────────────────────────────────────────
+
+const ALLOWED_COLLECTION_SLUGS = ['users', 'services', 'projects', 'faqs'] as const
+type AllowedCollectionSlug = (typeof ALLOWED_COLLECTION_SLUGS)[number]
+
+const ALLOWED_GLOBAL_SLUGS = [
+  'hero-section',
+  'about-section',
+  'services-section',
+  'projects-section',
+  'faq-section',
+  'contact-info',
+] as const
+type AllowedGlobalSlug = (typeof ALLOWED_GLOBAL_SLUGS)[number]
+
+function assertCollectionSlug(slug: string): AllowedCollectionSlug {
+  if (!ALLOWED_COLLECTION_SLUGS.includes(slug as AllowedCollectionSlug)) {
+    throw new Error('Invalid collection')
+  }
+  return slug as AllowedCollectionSlug
+}
+
+function assertGlobalSlug(slug: string): AllowedGlobalSlug {
+  if (!ALLOWED_GLOBAL_SLUGS.includes(slug as AllowedGlobalSlug)) {
+    throw new Error('Invalid global section')
+  }
+  return slug as AllowedGlobalSlug
+}
+
+// ─── Auth helper ──────────────────────────────────────────────────────────────
+
+async function requireAuth() {
+  const payload = await getPayload({ config })
+  const reqHeaders = await headers()
+  const { user } = await payload.auth({ headers: reqHeaders })
+  if (!user) throw new Error('Unauthorized')
+  return { payload, user }
+}
+
+// ─── Public helpers ───────────────────────────────────────────────────────────
 
 export async function getCurrentUser() {
   try {
@@ -13,18 +54,36 @@ export async function getCurrentUser() {
     const { user } = await payload.auth({ headers: reqHeaders })
     if (user) {
       return {
-        email: (user.email as string) || 'yoelkys.rrg@gmail.com',
-        name: (user.name as string) || 'Yoelkys R Rodriguez Gonzalez',
+        email: (user.email as string) || '',
+        name: (user.name as string) || '',
         role: (user.role as string) || 'admin',
       }
     }
-  } catch (error) {
-    console.error('Error fetching current user:', error)
+  } catch {
+    // silently return null — do not leak internal errors
   }
   return null
 }
 
 export async function loginUser(email: string, pass: string) {
+  // ── Rate limiting — Fix #8 ──────────────────────────────────────────────────
+  const reqHeaders = await headers()
+  const ip =
+    reqHeaders.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    reqHeaders.get('x-real-ip') ||
+    'anonymous'
+
+  const rateLimit = await checkLoginRateLimit(ip)
+  if (!rateLimit.allowed) {
+    const resetIn = Math.ceil((rateLimit.resetAt.getTime() - Date.now()) / 60000)
+    return {
+      success: false,
+      error: `Demasiados intentos. Intentá de nuevo en ${resetIn} minuto${resetIn !== 1 ? 's' : ''}.`,
+      rateLimited: true,
+    }
+  }
+  // ─────────────────────────────────────────────────────────────────────────────
+
   try {
     const payload = await getPayload({ config })
     const res = await payload.login({
@@ -39,6 +98,7 @@ export async function loginUser(email: string, pass: string) {
         secure: process.env.NODE_ENV === 'production',
         path: '/',
         sameSite: 'lax',
+        maxAge: 60 * 60 * 8,
       })
       return {
         success: true,
@@ -49,9 +109,8 @@ export async function loginUser(email: string, pass: string) {
         },
       }
     }
-  } catch (error: unknown) {
-    const msg = error instanceof Error ? error.message : 'Credenciales inválidas'
-    return { success: false, error: msg }
+  } catch {
+    return { success: false, error: 'Credenciales inválidas' }
   }
   return { success: false, error: 'No se pudo iniciar sesión con esas credenciales' }
 }
@@ -66,139 +125,139 @@ export async function logoutUser() {
   }
 }
 
+// ─── Dashboard ────────────────────────────────────────────────────────────────
+
 export async function getDashboardStats() {
   try {
-    const payload = await getPayload({ config })
-    const services = await payload.find({ collection: 'services', limit: 1 })
-    const projects = await payload.find({ collection: 'projects', limit: 1 })
-    const faqs = await payload.find({ collection: 'faqs', limit: 1 })
-    const users = await payload.find({ collection: 'users', limit: 1 })
-
+    await requireAuth() // Fix #1 — auth required
+    const { payload } = await requireAuth()
+    const [services, projects, faqs, users] = await Promise.all([
+      payload.find({ collection: 'services', limit: 1 }),
+      payload.find({ collection: 'projects', limit: 1 }),
+      payload.find({ collection: 'faqs', limit: 1 }),
+      payload.find({ collection: 'users', limit: 1 }),
+    ])
     return {
       services: services.totalDocs,
       projects: projects.totalDocs,
       faqs: faqs.totalDocs,
       users: users.totalDocs,
     }
-  } catch (error) {
-    console.error('Error fetching dashboard stats:', error)
+  } catch {
     return { services: 0, projects: 0, faqs: 0, users: 0 }
   }
 }
 
+// ─── Collection CRUD ──────────────────────────────────────────────────────────
+
 export async function getCollectionItems(slug: string) {
   try {
-    const payload = await getPayload({ config })
+    const validSlug = assertCollectionSlug(slug) // Fix #3 — runtime allowlist
+    const { payload } = await requireAuth()       // Fix #1 — auth required
     const res = await payload.find({
-      collection: slug as 'users' | 'projects' | 'services' | 'faqs',
+      collection: validSlug,
       limit: 100,
-      overrideAccess: true,
     })
     return { success: true, docs: res.docs as unknown as Record<string, unknown>[] }
   } catch (error: unknown) {
-    const msg = error instanceof Error ? error.message : String(error)
     console.error(`Error fetching collection ${slug}:`, error)
-    return { success: false, error: msg, docs: [] }
+    return { success: false, error: 'No se pudo obtener el listado', docs: [] } // Fix #6
   }
 }
 
 export async function createCollectionItem(slug: string, data: Record<string, unknown>) {
   try {
-    const payload = await getPayload({ config })
+    const validSlug = assertCollectionSlug(slug) // Fix #3
+    const { payload } = await requireAuth()       // Fix #1
     const doc = await payload.create({
-      collection: slug as 'users' | 'projects' | 'services' | 'faqs',
+      collection: validSlug,
       data: data as never,
-      overrideAccess: true,
     })
     revalidatePath('/admin')
     revalidatePath(`/admin/collections/${slug}`)
     revalidatePath('/')
     return { success: true, doc }
   } catch (error: unknown) {
-    const msg = error instanceof Error ? error.message : String(error)
     console.error(`Error creating item in ${slug}:`, error)
-    return { success: false, error: msg }
+    return { success: false, error: 'No se pudo crear el registro' } // Fix #6
   }
 }
 
-export async function updateCollectionItem(slug: string, id: string | number, data: Record<string, unknown>) {
+export async function updateCollectionItem(
+  slug: string,
+  id: string | number,
+  data: Record<string, unknown>,
+) {
   try {
-    const payload = await getPayload({ config })
+    const validSlug = assertCollectionSlug(slug) // Fix #3
+    const { payload } = await requireAuth()       // Fix #1
     const doc = await payload.update({
-      collection: slug as 'users' | 'projects' | 'services' | 'faqs',
+      collection: validSlug,
       id,
       data: data as never,
-      overrideAccess: true,
     })
     revalidatePath('/admin')
     revalidatePath(`/admin/collections/${slug}`)
     revalidatePath('/')
     return { success: true, doc }
   } catch (error: unknown) {
-    const msg = error instanceof Error ? error.message : String(error)
     console.error(`Error updating item ${id} in ${slug}:`, error)
-    return { success: false, error: msg }
+    return { success: false, error: 'No se pudo actualizar el registro' } // Fix #6
   }
 }
 
 export async function deleteCollectionItem(slug: string, id: string | number) {
   try {
-    const payload = await getPayload({ config })
+    const validSlug = assertCollectionSlug(slug) // Fix #3
+    const { payload, user } = await requireAuth() // Fix #1
 
-    if (slug === 'users') {
-      const reqHeaders = await headers()
-      const { user } = await payload.auth({ headers: reqHeaders })
-      if (user && String(user.id) === String(id)) {
-        return { success: false, error: 'No podés eliminar tu propia cuenta de usuario' }
-      }
+    // Self-delete protection (double-checked server-side)
+    if (validSlug === 'users' && String(user.id) === String(id)) {
+      return { success: false, error: 'No podés eliminar tu propia cuenta de usuario' }
     }
 
     await payload.delete({
-      collection: slug as 'users' | 'projects' | 'services' | 'faqs',
+      collection: validSlug,
       id,
-      overrideAccess: true,
     })
     revalidatePath('/admin')
     revalidatePath(`/admin/collections/${slug}`)
     revalidatePath('/')
     return { success: true }
   } catch (error: unknown) {
-    const msg = error instanceof Error ? error.message : String(error)
     console.error(`Error deleting item ${id} in ${slug}:`, error)
-    return { success: false, error: msg }
+    return { success: false, error: 'No se pudo eliminar el registro' } // Fix #6
   }
 }
 
+// ─── Globals CRUD ─────────────────────────────────────────────────────────────
+
 export async function getGlobalData(slug: string) {
   try {
-    const payload = await getPayload({ config })
-    const data = await payload.findGlobal({
-      slug: slug as 'hero-section' | 'about-section' | 'services-section' | 'projects-section' | 'faq-section' | 'contact-info',
-      overrideAccess: true,
-    })
+    const validSlug = assertGlobalSlug(slug) // Fix #3
+    const { payload } = await requireAuth()   // Fix #1
+    const data = await payload.findGlobal({ slug: validSlug })
     return { success: true, data: data as unknown as Record<string, unknown> }
   } catch (error: unknown) {
-    const msg = error instanceof Error ? error.message : String(error)
     console.error(`Error fetching global ${slug}:`, error)
-    return { success: false, error: msg, data: null }
+    return { success: false, error: 'No se pudo obtener la sección', data: null } // Fix #6
   }
 }
 
 export async function updateGlobalData(slug: string, data: Record<string, unknown>) {
   try {
-    const payload = await getPayload({ config })
+    const validSlug = assertGlobalSlug(slug) // Fix #3
+    const { payload } = await requireAuth()   // Fix #1
     const updated = await payload.updateGlobal({
-      slug: slug as 'hero-section' | 'about-section' | 'services-section' | 'projects-section' | 'faq-section' | 'contact-info',
+      slug: validSlug,
       data: data as never,
-      overrideAccess: true,
     })
     revalidatePath('/admin')
     revalidatePath(`/admin/globals/${slug}`)
     revalidatePath('/')
     return { success: true, data: updated }
   } catch (error: unknown) {
-    const msg = error instanceof Error ? error.message : String(error)
     console.error(`Error updating global ${slug}:`, error)
-    return { success: false, error: msg }
+    return { success: false, error: 'No se pudo actualizar la sección' } // Fix #6
   }
 }
